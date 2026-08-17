@@ -131,6 +131,59 @@
 
   .drag-outline { position: fixed; pointer-events: none; z-index: 9999; border: 2px dotted var(--ink); }
 
+  /* minesweeper */
+  .ms { display: flex; flex-direction: column; gap: 10px; }
+  .ms-head {
+    display: flex; align-items: center; justify-content: space-between;
+    border: 2px solid var(--ink); padding: 4px 8px;
+  }
+  .ms-readout {
+    font-size: 18px; line-height: 1; letter-spacing: 1px;
+    background: var(--ink); color: var(--paper); padding: 2px 6px;
+  }
+  .ms-reset {
+    width: 30px; height: 30px; border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center; padding: 0;
+    background: var(--paper); color: var(--ink);
+  }
+  .ms-reset:active { background: var(--ink); color: var(--paper); }
+  .ms-reset svg { width: 18px; height: 18px; }
+  .ms-grid { display: grid; grid-template-columns: repeat(9, 26px); gap: 2px; }
+  .ms-cell {
+    width: 26px; height: 26px; padding: 0;
+    border: 1px solid var(--ink);
+    background-color: var(--paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23d3cbba'/%3E%3Crect x='0' y='0' width='1' height='2' fill='%23000000'/%3E%3Crect x='2' y='2' width='1' height='2' fill='%23000000'/%3E%3C/svg%3E");
+    font-size: 17px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink); cursor: pointer; user-select: none;
+    -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+  }
+  .ms-cell:focus-visible { outline: 2px dotted var(--ink); outline-offset: -4px; }
+  .ms-cell.is-open { background-image: none; border-color: rgba(0,0,0,0.25); cursor: default; }
+  .ms-cell.is-mine { background-image: none; background-color: var(--ink); color: var(--paper); }
+  .ms-cell svg { width: 15px; height: 15px; }
+  .ms-status { font-size: 14px; opacity: 0.6; text-align: center; }
+  .ms.is-over .ms-cell { cursor: default; }
+
+  /* are.na field notes */
+  .arena-row { grid-template-columns: 26px 1fr 96px; padding: 9px 4px; align-items: start; }
+  .arena-row .wl-name { font-size: 16px; line-height: 1.25; }
+  .arena-row .wl-tags { font-size: 13px; opacity: 0.65; text-align: right; }
+  button.arena-row:hover .wl-tags, button.arena-row:focus-visible .wl-tags { opacity: 1; }
+  .arena-more {
+    display: block; width: 100%; margin-top: 10px; padding: 8px;
+    border: 2px solid var(--ink); background: var(--paper); color: var(--ink);
+    font-size: 15px; text-align: center;
+  }
+  .arena-more:active, .arena-more:hover { background: var(--ink); color: var(--paper); }
+  .arena-state { font-size: 15px; opacity: 0.6; }
+  .arena-state a { color: var(--ink); }
+  .blockwin-img { display: block; width: 100%; height: auto; image-rendering: pixelated; border: 2px solid var(--ink); }
+  .blockwin-meta { font-size: 14px; opacity: 0.6; margin-top: 8px; }
+  .blockwin-text { font-size: 16px; line-height: 1.35; }
+  .blockwin-text p { margin-bottom: 8px; }
+
   /* 1984 scrollbar */
   .scrollframe { display: flex; padding: 0 !important; }
   .scrollframe .scrollcontent {
@@ -196,6 +249,15 @@
     }
     .icon:active .art { background: var(--ink); color: var(--paper); }
     .icon:active .art svg { stroke: var(--paper); }
+
+    /* minesweeper fills the window on touch screens */
+    .ms-grid { grid-template-columns: repeat(9, 1fr); width: 100%; gap: 3px; }
+    .ms-cell { width: auto; height: auto; aspect-ratio: 1; font-size: 20px; }
+    .ms-cell svg { width: 58%; height: 58%; }
+    .ms-reset { width: 40px; height: 40px; }
+    .ms-reset svg { width: 24px; height: 24px; }
+    .ms-readout { font-size: 20px; padding: 4px 8px; }
+    .ms-status { font-size: 15px; }
   }
 </style>\n</head>\n<body>
 <nav class="menubar" aria-label="menu bar">
@@ -286,24 +348,39 @@
     </div></div>
   </section>
 
-  <section class="win" id="win-fieldnotes" hidden style="left:20%; top:30%; width:360px; z-index:4;">
+  <section class="win" id="win-fieldnotes" hidden data-default-closed style="left:17%; top:28%; width:min(460px, 34vw); z-index:4;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close field notes"></button>field notes</header>
-    <div class="winbody"><div class="pane" style="max-height:380px;">
-      <p>placeholder — this window will pull from justin's public are.na channel.</p>
+    <div class="winbody"><div class="pane scrollframe" style="height:300px;">
+      <div class="scrollcontent"><div id="arena-list"><p class="arena-state">reading channel&hellip;</p></div></div>
+      <div class="rail">
+        <button class="rail-up" aria-label="scroll up" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M4 1 L7 6 L1 6 Z" fill="currentColor"/></svg></button>
+        <div class="rail-track"><div class="rail-thumb"></div></div>
+        <button class="rail-down" aria-label="scroll down" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M1 2 L7 2 L4 7 Z" fill="currentColor"/></svg></button>
+      </div>
     </div></div>
   </section>
 
-  <section class="win" id="win-experiments" hidden style="left:30%; top:36%; width:360px; z-index:4;">
+  <section class="win" id="win-experiments" hidden data-default-closed style="left:30%; top:36%; width:360px; z-index:4;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close experiments"></button>experiments</header>
     <div class="winbody"><div class="pane" style="max-height:380px;">
-      <p>placeholder — personal and exploratory work.</p>
+      <p>coming soon.</p>
     </div></div>
   </section>
 
-  <section class="win" id="win-minesweeper" hidden style="left:44%; top:32%; width:300px; z-index:4;">
+  <section class="win" id="win-minesweeper" hidden data-default-closed style="left:40%; top:26%; width:auto; z-index:4;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close minesweeper"></button>minesweeper</header>
-    <div class="winbody"><div class="pane">
-      <p>placeholder — the game arrives here.</p>
+    <div class="winbody"><div class="pane" style="padding:12px;">
+      <div class="ms">
+        <div class="ms-head">
+          <span class="ms-readout" id="ms-flags">010</span>
+          <button class="ms-reset" id="ms-reset" aria-label="new game">
+            <svg viewBox="0 0 16 16" id="ms-face"><circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="5.8" cy="6.4" r="0.9" fill="currentColor"/><circle cx="10.2" cy="6.4" r="0.9" fill="currentColor"/><path d="M5.4 10 q2.6 2 5.2 0" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+          <span class="ms-readout" id="ms-time">000</span>
+        </div>
+        <div class="ms-grid" id="ms-grid"></div>
+        <p class="ms-status" id="ms-status">left click reveals &middot; right click flags</p>
+      </div>
     </div></div>
   </section>
 
@@ -427,10 +504,12 @@ const FRAMES=[["         .                                                      
     zTop += 1;
     win.style.zIndex = zTop;
   }
-  document.querySelectorAll('.win').forEach(function (win) {
+  function initWindow(win) {
     win.addEventListener('mousedown', function () { if (!mobile.matches) focusWin(win); });
     var closeBtn = win.querySelector('[data-close]');
-    if (closeBtn) closeBtn.addEventListener('click', function (e) { e.stopPropagation(); win.hidden = true; playClose(); });
+    if (closeBtn) closeBtn.addEventListener('click', function (e) {
+      e.stopPropagation(); win.hidden = true; delete win.dataset.userOpened; playClose();
+    });
 
     /* dotted-outline drag by titlebar (mouse only, not the fixed anchor) */
     if (win.hasAttribute('data-fixed')) return;
@@ -482,10 +561,11 @@ const FRAMES=[["         .                                                      
       document.addEventListener('mouseup', onUp);
       window.addEventListener('blur', onCancel);
     });
-  });
+  }
+  document.querySelectorAll('.win').forEach(initWindow);
 
   /* 1984 scrollbar */
-  document.querySelectorAll('.scrollframe').forEach(function (frame) {
+  function initScrollframe(frame) {
     var content = frame.querySelector('.scrollcontent');
     var rail = frame.querySelector('.rail');
     var track = frame.querySelector('.rail-track');
@@ -534,16 +614,33 @@ const FRAMES=[["         .                                                      
       document.addEventListener('mouseup', up);
     });
     render();
-  });
+  }
+  document.querySelectorAll('.scrollframe').forEach(initScrollframe);
 
   /* icons open (or focus) their window */
-  /* on mobile every window is open; the dock jumps between them */
-  function openAllForMobile() {
-    if (!mobile.matches) return;
-    document.querySelectorAll('.win').forEach(function (w) { w.hidden = false; });
+  /* on mobile every window is open; the dock jumps between them.
+     back on desktop, windows the visitor never opened return to closed. */
+  function syncWindows() {
+    if (mobile.matches) {
+      document.querySelectorAll('.win').forEach(function (w) { w.hidden = false; });
+    } else {
+      document.querySelectorAll('.win[data-default-closed]').forEach(function (w) {
+        if (!w.dataset.userOpened) w.hidden = true;
+      });
+    }
   }
-  openAllForMobile();
-  mobile.addEventListener('change', openAllForMobile);
+  syncWindows();
+  if (mobile.addEventListener) mobile.addEventListener('change', syncWindows);
+  else if (mobile.addListener) mobile.addListener(syncWindows);
+  var syncTimer = null;
+  var wasMobile = mobile.matches;
+  window.addEventListener('resize', function () {
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(function () {
+      syncWindows();
+      if (mobile.matches !== wasMobile) { wasMobile = mobile.matches; rerenderArena(); }
+    }, 120);
+  });
 
   document.querySelectorAll('.icon[data-open]').forEach(function (icon) {
     icon.addEventListener('click', function () {
@@ -551,7 +648,9 @@ const FRAMES=[["         .                                                      
       if (!win) return;
       if (win.hidden) playOpen();
       win.hidden = false;
+      if (win.id === 'win-fieldnotes') loadArena();
       if (!mobile.matches) {
+        win.dataset.userOpened = '1';
         focusWin(win);
       } else {
         var y = win.getBoundingClientRect().top + window.pageYOffset - 36;
@@ -559,6 +658,211 @@ const FRAMES=[["         .                                                      
       }
     });
   });
+
+  /* ---------- are.na field notes ---------- */
+  var ARENA_CHANNEL = 'stone-ir8bgq9hq7i';
+  var arenaLoaded = false;
+  var GLYPH = {
+    Image: '<svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M3 11 l3-3 2 2 3-3 2 2" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
+    Text: '<svg viewBox="0 0 16 16"><rect x="3" y="1" width="10" height="14" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5 5 h6 M5 8 h6 M5 11 h4" stroke="currentColor" stroke-width="1.2"/></svg>',
+    Link: '<svg viewBox="0 0 16 16"><path d="M4 2 v7 h8 M9 6 l3 3 -3 3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>',
+    Media: '<svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M7 6 l4 2 -4 2 z" fill="currentColor"/></svg>',
+    Attachment: '<svg viewBox="0 0 16 16"><path d="M10 4 v7 a3 3 0 0 1-6 0 v-7 a2 2 0 0 1 4 0 v7 a1 1 0 0 1-2 0 v-6" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
+    Channel: '<svg viewBox="0 0 16 16"><path d="M1 4 h5 l1 2 h8 v8 h-14 z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>'
+  };
+  /* are.na titles are often raw filenames; untitled visual blocks become numbered plates */
+  function cleanTitle(b, plateNo) {
+    var t = String(b.title || '').trim();
+    var digits = t.replace(/[^0-9]/g, '').length;
+    var junk = !t
+      || /\.(jpe?g|png|gif|webp|pdf|heic|tiff?)\b/i.test(t)
+      || /[?&](stp|tp|format|_nc)=/i.test(t)
+      || /^(img|dsc|screenshot|tumblr|uploads|element)[-_ ]/i.test(t)
+      || (t.length > 12 && digits / t.length > 0.4);
+    if (junk) {
+      if (b.class === 'Text') return 'note';
+      return 'plate ' + String(plateNo).padStart(2, '0');
+    }
+    return t.length > 46 ? t.slice(0, 45) + '\u2026' : t;
+  }
+  function arenaUrl(b) {
+    if (b.class === 'Channel') {
+      var owner = (b.user && b.user.slug) || (b.owner && b.owner.slug);
+      if (owner && b.slug) return 'https://www.are.na/' + owner + '/' + b.slug;
+    }
+    return 'https://www.are.na/block/' + b.id;
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  /* bayer 4x4 ordered dither -> paper/ink only */
+  function ditherToCanvas(img, maxW) {
+    var scale = Math.min(1, maxW / img.naturalWidth);
+    var w = Math.max(1, Math.round(img.naturalWidth * scale));
+    var h = Math.max(1, Math.round(img.naturalHeight * scale));
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    var d;
+    try { d = ctx.getImageData(0, 0, w, h); } catch (e) { return null; }
+    var bayer = [[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+    var px = d.data;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var i = (y * w + x) * 4;
+        var lum = 0.299 * px[i] + 0.587 * px[i+1] + 0.114 * px[i+2];
+        var t = (bayer[y & 3][x & 3] + 0.5) / 16 * 255;
+        var on = lum > t;
+        px[i]   = on ? 0xd3 : 0x00;
+        px[i+1] = on ? 0xcb : 0x00;
+        px[i+2] = on ? 0xba : 0x00;
+        px[i+3] = 255;
+      }
+    }
+    ctx.putImageData(d, 0, 0);
+    return c;
+  }
+  function mountDithered(holder, url, maxW) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function () {
+      var c = ditherToCanvas(img, maxW);
+      if (!c) return;
+      c.className = 'blockwin-img';
+      c.style.width = '100%';
+      holder.innerHTML = '';
+      holder.appendChild(c);
+    };
+    img.onerror = function () { holder.innerHTML = '<p class="arena-state">image unavailable</p>'; };
+    img.src = url;
+  }
+  var blockWinCount = 0;
+  function openBlockWindow(block) {
+    var id = 'win-block-' + (++blockWinCount);
+    var title = block.__title || block.title || 'untitled';
+    var win = document.createElement('section');
+    win.className = 'win';
+    win.id = id;
+    win.style.cssText = 'left:' + (22 + (blockWinCount % 5) * 3) + '%; top:' + (24 + (blockWinCount % 5) * 4) + '%; width:min(420px, 34vw);';
+    var body = '';
+    if (block.image && block.image.display) {
+      body += '<div class="block-img-holder"><p class="arena-state">rendering&hellip;</p></div>';
+    }
+    if (block.class === 'Text' && block.content) {
+      body += '<div class="blockwin-text">' + esc(block.content).split(/\n{2,}/).map(function (p) {
+        return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+      }).join('') + '</div>';
+    }
+    if (block.description) body += '<div class="blockwin-text"><p>' + esc(block.description) + '</p></div>';
+    var src = block.source && block.source.url;
+    if (src) {
+      var host = '';
+      try { host = new URL(src).host.replace(/^www\./, ''); } catch (e) { host = 'source'; }
+      body += '<p class="blockwin-meta"><a href="' + esc(src) + '" target="_blank" rel="noreferrer">' + esc(host) + ' &rarr;</a></p>';
+    }
+    body += '<p class="blockwin-meta"><a href="' + esc(arenaUrl(block)) + '" target="_blank" rel="noreferrer">' +
+      (block.class === 'Channel' ? 'view channel on are.na' : 'view on are.na') + ' &rarr;</a></p>';
+    win.innerHTML =
+      '<header class="titlebar"><button class="wsquare" data-close aria-label="close ' + esc(title) + '"></button>' + esc(title.toLowerCase()) + '</header>' +
+      '<div class="winbody"><div class="pane scrollframe" style="height:300px;">' +
+        '<div class="scrollcontent">' + body + '</div>' +
+        '<div class="rail">' +
+          '<button class="rail-up" aria-label="scroll up" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M4 1 L7 6 L1 6 Z" fill="currentColor"/></svg></button>' +
+          '<div class="rail-track"><div class="rail-thumb"></div></div>' +
+          '<button class="rail-down" aria-label="scroll down" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M1 2 L7 2 L4 7 Z" fill="currentColor"/></svg></button>' +
+        '</div>' +
+      '</div></div>';
+    var fn = document.getElementById('win-fieldnotes');
+    if (mobile.matches && fn && fn.parentNode) fn.insertAdjacentElement('afterend', win);
+    else document.getElementById('desktop').appendChild(win);
+    initWindow(win);
+    var frame = win.querySelector('.scrollframe');
+    initScrollframe(frame);
+    initScrollSound(frame);
+    focusWin(win);
+    playOpen();
+    var holder = win.querySelector('.block-img-holder');
+    if (holder) mountDithered(holder, block.image.display.url, 800);
+    if (mobile.matches) {
+      var y = win.getBoundingClientRect().top + window.pageYOffset - 36;
+      window.scrollTo(0, y);
+    }
+  }
+  var arenaBlocks = null, arenaOffset = 0;
+  var ARENA_MOBILE_CAP = 6;
+  function assignTitles(blocks) {
+    var plate = 0;
+    blocks.forEach(function (b) {
+      if (b.__title) return;
+      if (b.class === 'Image' || b.class === 'Attachment' || b.class === 'Media') plate++;
+      b.__title = cleanTitle(b, plate);
+    });
+  }
+  function renderArena(blocks) {
+    arenaBlocks = blocks;
+    assignTitles(blocks);
+    var list = document.getElementById('arena-list');
+    if (!blocks.length) { list.innerHTML = '<p class="arena-state">nothing here yet.</p>'; return; }
+    var capped = mobile.matches && blocks.length > ARENA_MOBILE_CAP;
+    var shown = blocks;
+    if (capped) {
+      shown = [];
+      for (var k = 0; k < ARENA_MOBILE_CAP; k++) {
+        shown.push(blocks[(arenaOffset + k) % blocks.length]);
+      }
+    }
+    var html = '<div class="worklist">';
+    shown.forEach(function (b, i) {
+      var title = b.__title;
+      var kind = b.class === 'Link' && b.source && b.source.url
+        ? (function () { try { return new URL(b.source.url).host.replace(/^www\./, ''); } catch (e) { return 'link'; } })()
+        : String(b.class || '').toLowerCase();
+      html += '<button class="wl-row arena-row" data-i="' + i + '">' +
+        '<span class="wl-glyph">' + (GLYPH[b.class] || GLYPH.Link) + '</span>' +
+        '<span class="wl-name">' + esc(String(title).toLowerCase()) + '</span>' +
+        '<span class="wl-tags">' + esc(kind) + '</span>' +
+      '</button>';
+    });
+    html += '</div>';
+    if (capped) {
+      html += '<button class="arena-more" id="arena-more">load ' + ARENA_MOBILE_CAP + ' more</button>';
+    }
+    list.innerHTML = html;
+    list.querySelectorAll('.arena-row').forEach(function (row, i) {
+      row.addEventListener('mouseenter', function () { playStone(i); });
+      row.addEventListener('click', function () { openBlockWindow(shown[i]); });
+    });
+    var more = document.getElementById('arena-more');
+    if (more) more.addEventListener('click', function () {
+      arenaOffset = (arenaOffset + ARENA_MOBILE_CAP) % blocks.length;
+      playStone(2);
+      renderArena(blocks);
+    });
+  }
+  function rerenderArena() { if (arenaBlocks) renderArena(arenaBlocks); }
+  function loadArena() {
+    if (arenaLoaded) return;
+    arenaLoaded = true;
+    var list = document.getElementById('arena-list');
+    fetch('https://api.are.na/v2/channels/' + ARENA_CHANNEL + '?per=100')
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) throw new Error('private');
+        if (!r.ok) throw new Error('http');
+        return r.json();
+      })
+      .then(function (j) {
+        var blocks = (j.contents || []).slice().reverse();
+        renderArena(blocks);
+      })
+      .catch(function (err) {
+        arenaLoaded = false;
+        list.innerHTML = '<p class="arena-state">channel unavailable. ' +
+          '<a href="https://www.are.na/rey-reyna/' + ARENA_CHANNEL + '" target="_blank" rel="noreferrer">view on are.na &rarr;</a></p>';
+      });
+  }
 
   /* client folders — placeholder until project windows exist */
   document.querySelectorAll('[data-soon]').forEach(function (b) {
@@ -681,7 +985,7 @@ const FRAMES=[["         .                                                      
     src.connect(gain).connect(ctx.destination);
     src.start(0, 0.15, 0.22);
   }
-  document.querySelectorAll('.scrollframe').forEach(function (frame) {
+  function initScrollSound(frame) {
     var thumb = frame.querySelector('.rail-thumb');
     var track = frame.querySelector('.rail-track');
     var content = frame.querySelector('.scrollcontent');
@@ -700,7 +1004,161 @@ const FRAMES=[["         .                                                      
       if (wheelTimer) clearTimeout(wheelTimer);
       wheelTimer = setTimeout(slideStop, 150);
     }, { passive: true });
-  });
+  }
+  document.querySelectorAll('.scrollframe').forEach(initScrollSound);
+
+  /* ---------- minesweeper ---------- */
+  (function () {
+    var COLS = 9, ROWS = 9, MINES = 10;
+    var gridEl = document.getElementById('ms-grid');
+    var flagsEl = document.getElementById('ms-flags');
+    var timeEl = document.getElementById('ms-time');
+    var statusEl = document.getElementById('ms-status');
+    var resetEl = document.getElementById('ms-reset');
+    var faceEl = document.getElementById('ms-face');
+    var msRoot = gridEl ? gridEl.closest('.ms') : null;
+    if (!gridEl) return;
+
+    var MINE_SVG = '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.4" fill="currentColor"/><path d="M8 1.5 v3 M8 11.5 v3 M1.5 8 h3 M11.5 8 h3 M3.4 3.4 l2.1 2.1 M12.6 3.4 l-2.1 2.1 M3.4 12.6 l2.1-2.1 M12.6 12.6 l-2.1-2.1" stroke="currentColor" stroke-width="1.3"/></svg>';
+    var FLAG_SVG = '<svg viewBox="0 0 16 16"><path d="M4.5 14 v-12" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 2.5 h7 l-2 2.4 2 2.4 h-7 z" fill="currentColor"/></svg>';
+    var FACE_OK = '<circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="5.8" cy="6.4" r="0.9" fill="currentColor"/><circle cx="10.2" cy="6.4" r="0.9" fill="currentColor"/><path d="M5.4 10 q2.6 2 5.2 0" fill="none" stroke="currentColor" stroke-width="1.3"/>';
+    var FACE_DEAD = '<circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.7 5.3 l2.2 2.2 M6.9 5.3 l-2.2 2.2 M9.1 5.3 l2.2 2.2 M11.3 5.3 l-2.2 2.2" stroke="currentColor" stroke-width="1.3"/><path d="M5.4 11.4 q2.6-2 5.2 0" fill="none" stroke="currentColor" stroke-width="1.3"/>';
+    var FACE_WIN = '<circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.4 6.4 h2.8 M8.8 6.4 h2.8" stroke="currentColor" stroke-width="1.4"/><path d="M5.4 10 q2.6 2.4 5.2 0" fill="none" stroke="currentColor" stroke-width="1.3"/>';
+
+    var cells = [], mine = [], count = [], open = [], flag = [];
+    var started = false, over = false, timer = null, secs = 0;
+    var coarse = window.matchMedia('(pointer: coarse)');
+    function hint() {
+      return coarse.matches ? 'tap reveals \u00b7 hold to flag'
+                            : 'left click reveals \u00b7 right click flags';
+    }
+
+    function pad(n) { return String(Math.max(0, Math.min(999, n))).padStart(3, '0'); }
+    function idx(c, r) { return r * COLS + c; }
+    function neighbors(i) {
+      var c = i % COLS, r = (i / COLS) | 0, out = [];
+      for (var dr = -1; dr <= 1; dr++) for (var dc = -1; dc <= 1; dc++) {
+        if (!dr && !dc) continue;
+        var nc = c + dc, nr = r + dr;
+        if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS) out.push(idx(nc, nr));
+      }
+      return out;
+    }
+    function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+    function startTimer() {
+      stopTimer();
+      timer = setInterval(function () { secs++; timeEl.textContent = pad(secs); }, 1000);
+    }
+    function place(safe) {
+      var banned = {}; banned[safe] = 1;
+      neighbors(safe).forEach(function (n) { banned[n] = 1; });
+      var placed = 0, total = COLS * ROWS;
+      while (placed < MINES) {
+        var p = Math.floor(Math.random() * total);
+        if (mine[p] || banned[p]) continue;
+        mine[p] = true; placed++;
+      }
+      for (var i = 0; i < total; i++) {
+        count[i] = mine[i] ? 0 : neighbors(i).filter(function (n) { return mine[n]; }).length;
+      }
+    }
+    function paint(i) {
+      var el = cells[i];
+      el.className = 'ms-cell';
+      if (open[i]) {
+        el.classList.add('is-open');
+        if (mine[i]) { el.classList.add('is-mine'); el.innerHTML = MINE_SVG; }
+        else el.textContent = count[i] ? String(count[i]) : '';
+      } else {
+        el.innerHTML = flag[i] ? FLAG_SVG : '';
+      }
+    }
+    function paintAll() { for (var i = 0; i < cells.length; i++) paint(i); }
+    function flagsLeft() {
+      var f = 0; for (var i = 0; i < flag.length; i++) if (flag[i]) f++;
+      return MINES - f;
+    }
+    function reveal(i) {
+      if (open[i] || flag[i]) return;
+      open[i] = true;
+      if (count[i] === 0 && !mine[i]) neighbors(i).forEach(reveal);
+    }
+    function finish(won) {
+      over = true; stopTimer();
+      msRoot.classList.add('is-over');
+      if (!won) for (var i = 0; i < mine.length; i++) if (mine[i]) open[i] = true;
+      paintAll();
+      faceEl.innerHTML = won ? FACE_WIN : FACE_DEAD;
+      statusEl.textContent = won ? 'swept clean in ' + secs + 's' : 'boom.';
+      if (won) { [0,1,2,3,4].forEach(function (n, k) { setTimeout(function () { playStone(n); }, k * 110); }); }
+      else playClose();
+    }
+    function checkWin() {
+      var total = COLS * ROWS, opened = 0;
+      for (var i = 0; i < total; i++) if (open[i]) opened++;
+      if (opened === total - MINES) finish(true);
+    }
+    function onReveal(i) {
+      if (over || open[i] || flag[i]) return;
+      if (!started) { started = true; place(i); startTimer(); }
+      if (mine[i]) { open[i] = true; finish(false); return; }
+      reveal(i);
+      paintAll();
+      playStone(i % 5);
+      checkWin();
+    }
+    function onFlag(i) {
+      if (over || open[i]) return;
+      if (!flag[i] && flagsLeft() <= 0) return;
+      flag[i] = !flag[i];
+      flagsEl.textContent = pad(flagsLeft());
+      paint(i);
+      playStone(flag[i] ? 4 : 0);
+    }
+    function build() {
+      stopTimer();
+      cells = []; mine = []; count = []; open = []; flag = [];
+      started = false; over = false; secs = 0;
+      msRoot.classList.remove('is-over');
+      faceEl.innerHTML = FACE_OK;
+      timeEl.textContent = pad(0);
+      flagsEl.textContent = pad(MINES);
+      statusEl.textContent = hint();
+      gridEl.innerHTML = '';
+      for (var i = 0; i < COLS * ROWS; i++) {
+        mine[i] = false; count[i] = 0; open[i] = false; flag[i] = false;
+        var b = document.createElement('button');
+        b.className = 'ms-cell';
+        b.type = 'button';
+        b.setAttribute('aria-label', 'cell ' + (i + 1));
+        (function (n) {
+          b.addEventListener('click', function () { onReveal(n); });
+          b.addEventListener('contextmenu', function (e) { e.preventDefault(); onFlag(n); });
+          var lp = null;
+          b.addEventListener('touchstart', function () {
+            lp = setTimeout(function () { onFlag(n); lp = null; }, 450);
+          }, { passive: true });
+          b.addEventListener('touchend', function (e) {
+            if (lp) { clearTimeout(lp); lp = null; }
+            else if (e.cancelable) e.preventDefault();
+          }, { passive: false });
+          b.addEventListener('touchmove', function () {
+            if (lp) { clearTimeout(lp); lp = null; }
+          }, { passive: true });
+        })(i);
+        cells.push(b);
+        gridEl.appendChild(b);
+      }
+    }
+    resetEl.addEventListener('click', function () { build(); playOpen(); });
+    function refreshHint() { if (!started && !over) statusEl.textContent = hint(); }
+    if (coarse.addEventListener) coarse.addEventListener('change', refreshHint);
+    else if (coarse.addListener) coarse.addListener(refreshHint);
+    build();
+  })();
+
+  /* mobile shows every window at once, so field notes loads immediately */
+  if (mobile.matches) loadArena();
 })();
 </script>
 </body>
