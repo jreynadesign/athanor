@@ -94,7 +94,6 @@
   .caption .attrib { opacity: 0.6; }
 
   /* clients ledger */
-  #win-clients .pane { padding-top: 6px; }
   .worklist { display: flex; flex-direction: column; }
   .wl-row {
     display: grid; grid-template-columns: 26px 90px 1fr; gap: 10px;
@@ -354,7 +353,8 @@
 
   <section class="win" id="win-clients" style="left:min(65%, calc(100% - 452px)); top:26%; width:min(440px, 60vw); z-index:7;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close client projects"></button>client projects</header>
-    <div class="winbody"><div class="pane" style="max-height:480px;">
+    <div class="winbody"><div class="pane scrollframe" style="height:480px;">
+      <div class="scrollcontent">
       <div class="worklist">
         <div class="wl-row wl-head">
           <span class="wl-glyph"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 4 h5 l1 2 h8 v8 h-14 z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span>
@@ -436,6 +436,12 @@
           <span class="wl-name">airbnb</span>
           <span class="wl-tags">independent</span>
         </div>
+      </div>
+      </div>
+      <div class="rail" aria-hidden="false">
+        <button class="rail-up" aria-label="scroll up" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M4 1 L7 6 L1 6 Z" fill="currentColor"/></svg></button>
+        <div class="rail-track"><div class="rail-thumb"></div></div>
+        <button class="rail-down" aria-label="scroll down" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M1 2 L7 2 L4 7 Z" fill="currentColor"/></svg></button>
       </div>
     </div></div>
   </section>
