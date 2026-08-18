@@ -71,6 +71,14 @@
   }
   .win .wsquare { width: 10px; height: 10px; border: 1px solid var(--paper); background: var(--ink); flex: none; }
   .win button.wsquare { cursor: pointer; position: relative; padding: 0; }
+  .win button.wzoom { margin-left: auto; }
+  .win button.wzoom::before {
+    content: ""; position: absolute; left: 1px; top: 1px;
+    width: 4px; height: 4px; background: var(--paper);
+  }
+  .win button.wzoom:hover::before, .win button.wzoom:focus-visible::before {
+    width: 6px; height: 6px;
+  }
   .win button.wsquare:hover::after, .win button.wsquare:focus-visible::after {
     content: "x"; position: absolute; inset: 0; color: var(--paper);
     font-size: 11px; line-height: 8px; text-align: center; font-family: 'VT323', monospace;
@@ -97,17 +105,21 @@
   .wl-row:first-child { border-top: none; }
   .wl-glyph { width: 16px; height: 16px; display: block; }
   .wl-glyph svg { width: 16px; height: 16px; display: block; }
-  .wl-head { font-size: 17px; }
+  .wl-head { font-size: 17px; grid-template-columns: 26px 1fr auto; }
   button.wl-row:hover, button.wl-row:focus-visible { background: var(--ink); color: var(--paper); outline: none; }
   .wl-locked { opacity: 0.45; }
+  .wl-subhead { margin-top: 18px; }
   .wl-tags { font-size: 15px; }
+  /* wider name column here only: the are.na list reuses .wl-row for long titles */
+  #win-clients .wl-row { grid-template-columns: 26px 115px 1fr; }
+  #win-clients .wl-head { grid-template-columns: 26px 1fr auto; }
 
   /* clock placeholder */
   #clock {
     position: absolute; top: 20px; right: 24px; width: 132px; height: 66px;
     background: var(--ink); color: var(--paper);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 2px; z-index: 300;
+    gap: 2px; z-index: 1;
   }
   #clock .time { font-size: 28px; line-height: 1; }
   #clock .date { font-size: 13px; }
@@ -115,7 +127,7 @@
   /* ---- desktop icons ---- */
   .icon {
     position: absolute; display: flex; flex-direction: column; align-items: center; gap: 6px;
-    width: 84px; z-index: 10;
+    width: 84px; z-index: 2;
   }
   .icon:focus-visible { outline: 2px dotted var(--ink); outline-offset: 4px; }
   .icon .art {
@@ -130,6 +142,39 @@
   }
 
   .drag-outline { position: fixed; pointer-events: none; z-index: 9999; border: 2px dotted var(--ink); }
+
+  /* project windows */
+  .proj-intro { font-size: 16px; line-height: 1.35; }
+  .proj-intro p { margin-bottom: 8px; }
+  .proj-meta {
+    font-size: 13px; text-transform: none; letter-spacing: 0.3px;
+    background: var(--ink); color: var(--paper); display: inline-block;
+    padding: 1px 7px; margin-bottom: 10px;
+  }
+  .proj-rule { height: 1px; background: var(--ink); margin: 14px 0; }
+  .shot {
+    position: relative; margin: 0 0 12px; border: 2px solid var(--ink);
+    line-height: 0; cursor: crosshair;
+  }
+  .shot canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  /* full-page bands tile edge to edge: no per-band border, pinned to the
+     aspect-ratio box so rounding can never open a seam between bands */
+  .shot .shot-band {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    display: block; border: 0; image-rendering: pixelated;
+  }
+  .shot img, .shot .band-colour {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    object-fit: cover; visibility: hidden;
+  }
+  .shot:hover img, .shot.is-color img,
+  .shot:hover .band-colour, .shot.is-color .band-colour { visibility: visible; }
+  .shot-page:hover .shot .band-colour, .shot-page.is-color .shot .band-colour { visibility: visible; }
+  .shot-page { border: 2px solid var(--ink); margin-bottom: 12px; line-height: 0; }
+  .shot-page .shot { border: none; margin: 0; }
+  .shot-page:hover .shot img, .shot-page.is-color .shot img { visibility: visible; }
+  .shot-hint { font-size: 13px; opacity: 0.55; margin-bottom: 12px; }
+  .shot-loading { font-size: 14px; opacity: 0.5; padding: 10px; line-height: 1.4; }
 
   /* minesweeper */
   .ms { display: flex; flex-direction: column; gap: 10px; }
@@ -220,7 +265,7 @@
       position: static !important; width: 100% !important; height: auto !important;
       margin: 0 0 16px; scroll-margin-top: 36px;
     }
-    .win .pane { height: auto !important; max-height: none; }
+    .win .pane { height: auto !important; max-height: none !important; }
     .scrollframe { display: block; }
     .scrollframe .scrollcontent { overflow-y: visible; }
     .rail { display: none !important; }
@@ -232,6 +277,7 @@
     /* dock */
     #icons-row {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 400;
+      /* dock outranks stacked windows on mobile */
       background: var(--paper); border-top: 2px solid var(--ink);
       display: flex; justify-content: center; align-items: flex-start; gap: 8px;
       padding: 8px 10px; padding-bottom: calc(8px + env(safe-area-inset-bottom));
@@ -249,6 +295,12 @@
     }
     .icon:active .art { background: var(--ink); color: var(--paper); }
     .icon:active .art svg { stroke: var(--paper); }
+
+    .win button.wzoom { display: none; }
+
+    /* ledger columns tighten on phones: 375px cannot fit the desktop track widths */
+    #win-clients .wl-row { grid-template-columns: 20px 95px 1fr; gap: 8px; }
+    #win-clients .wl-head { grid-template-columns: 20px 1fr auto; }
 
     /* minesweeper fills the window on touch screens */
     .ms-grid { grid-template-columns: repeat(9, 1fr); width: 100%; gap: 3px; }
@@ -276,7 +328,7 @@
     <div class="date"></div>
   </div>
 
-  <section class="win" id="win-welcome" data-fixed style="left:25%; top:14%; width:min(720px, 60vw); z-index:1;">
+  <section class="win" id="win-welcome" data-fixed style="left:25%; top:14%; width:min(720px, 60vw); z-index:5;">
     <header class="titlebar"><span class="wsquare" aria-hidden="true"></span>welcome</header>
     <div class="winbody"><div class="pane" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
       <div id="horse-host"><pre id="horse" role="img" aria-label="galloping horse and rider, after muybridge"></pre></div>
@@ -284,7 +336,7 @@
     </div></div>
   </section>
 
-  <section class="win" id="win-about" style="left:13%; top:22%; width:320px; z-index:2;">
+  <section class="win" id="win-about" style="left:13%; top:22%; width:320px; z-index:6;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close about"></button>about</header>
     <div class="winbody"><div class="pane scrollframe" style="height:180px;">
       <div class="scrollcontent">
@@ -300,7 +352,7 @@
     </div></div>
   </section>
 
-  <section class="win" id="win-clients" style="left:65%; top:26%; width:min(380px, 30vw); z-index:3;">
+  <section class="win" id="win-clients" style="left:min(65%, calc(100% - 452px)); top:26%; width:min(440px, 60vw); z-index:7;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close client projects"></button>client projects</header>
     <div class="winbody"><div class="pane" style="max-height:480px;">
       <div class="worklist">
@@ -321,34 +373,74 @@
         </button>
         <button class="wl-row" data-soon>
           <span class="wl-glyph"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2 v7 h8 M9 6 l3 3 -3 3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>
-          <span class="wl-name">aws</span>
-          <span class="wl-tags">web design</span>
-        </button>
-        <button class="wl-row" data-soon>
-          <span class="wl-glyph"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2 v7 h8 M9 6 l3 3 -3 3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>
           <span class="wl-name">apple tv</span>
           <span class="wl-tags">web design</span>
         </button>
-        <button class="wl-row" data-soon>
-          <span class="wl-glyph"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2 v7 h8 M9 6 l3 3 -3 3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>
-          <span class="wl-name">meta</span>
-          <span class="wl-tags">product design, design system</span>
-        </button>
         <div class="wl-row wl-locked">
           <span class="wl-glyph"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5 7 v-2 a3 3 0 0 1 6 0 v2" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span>
-          <span class="wl-name">project</span>
+          <span class="wl-name">meta</span>
           <span class="wl-tags">coming soon</span>
         </div>
         <div class="wl-row wl-locked">
           <span class="wl-glyph"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5 7 v-2 a3 3 0 0 1 6 0 v2" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span>
-          <span class="wl-name">project</span>
+          <span class="wl-name">yahoo</span>
           <span class="wl-tags">coming soon</span>
+        </div>
+        <div class="wl-row wl-head wl-subhead">
+          <span class="wl-glyph"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 4 h5 l1 2 h8 v8 h-14 z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span>
+          <span class="wl-name">also worked with</span>
+          <span class="wl-tags"></span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">amazon aws</span>
+          <span class="wl-tags">instrument</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">chromebook</span>
+          <span class="wl-tags">this place</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">google chrome</span>
+          <span class="wl-tags">basic</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">google store</span>
+          <span class="wl-tags">basic</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">docusign</span>
+          <span class="wl-tags">basic</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">coinbase</span>
+          <span class="wl-tags">ustwo</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">morgan stanley</span>
+          <span class="wl-tags">rebel &amp; co</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">axios</span>
+          <span class="wl-tags">handsome</span>
+        </div>
+        <div class="wl-row wl-roster">
+          <span class="wl-glyph"></span>
+          <span class="wl-name">airbnb</span>
+          <span class="wl-tags">independent</span>
         </div>
       </div>
     </div></div>
   </section>
 
-  <section class="win" id="win-fieldnotes" hidden data-default-closed style="left:17%; top:28%; width:min(460px, 34vw); z-index:4;">
+  <section class="win" id="win-fieldnotes" hidden data-default-closed style="left:17%; top:28%; width:min(460px, 34vw); z-index:8;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close field notes"></button>field notes</header>
     <div class="winbody"><div class="pane scrollframe" style="height:300px;">
       <div class="scrollcontent"><div id="arena-list"><p class="arena-state">reading channel&hellip;</p></div></div>
@@ -360,14 +452,14 @@
     </div></div>
   </section>
 
-  <section class="win" id="win-experiments" hidden data-default-closed style="left:30%; top:36%; width:360px; z-index:4;">
+  <section class="win" id="win-experiments" hidden data-default-closed style="left:30%; top:36%; width:360px; z-index:8;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close experiments"></button>experiments</header>
     <div class="winbody"><div class="pane" style="max-height:380px;">
       <p>coming soon.</p>
     </div></div>
   </section>
 
-  <section class="win" id="win-minesweeper" hidden data-default-closed style="left:40%; top:26%; width:auto; z-index:4;">
+  <section class="win" id="win-minesweeper" hidden data-default-closed style="left:40%; top:26%; width:auto; z-index:8;">
     <header class="titlebar"><button class="wsquare" data-close aria-label="close minesweeper"></button>minesweeper</header>
     <div class="winbody"><div class="pane" style="padding:12px;">
       <div class="ms">
@@ -499,7 +591,7 @@ const FRAMES=[["         .                                                      
 
   /* ---------- window manager ---------- */
   var mobile = window.matchMedia('(max-width: 767px)');
-  var zTop = 10;
+  var zTop = 20;
   function focusWin(win) {
     zTop += 1;
     win.style.zIndex = zTop;
@@ -728,8 +820,9 @@ const FRAMES=[["         .                                                      
   function mountDithered(holder, url, maxW) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
+    var target = shotTargetWidth(holder, maxW);
     img.onload = function () {
-      var c = ditherToCanvas(img, maxW);
+      var c = ditherToCanvas(img, target);
       if (!c) return;
       c.className = 'blockwin-img';
       c.style.width = '100%';
@@ -864,13 +957,293 @@ const FRAMES=[["         .                                                      
       });
   }
 
-  /* client folders — placeholder until project windows exist */
-  document.querySelectorAll('[data-soon]').forEach(function (b) {
-    b.addEventListener('click', function () { b.blur(); });
-    b.title = 'soon';
+  /* ---------- project windows ---------- */
+  var PROJECTS = {
+    youtube: {
+      tags: 'product design, mvp design',
+      intro: ['youtube wanted to know whether an ai assistant could actually be useful to creators. i led design on the pilot that tested it.',
+              'mvp and visual design, a working prototype, and the ai personas \u2014 including their video performances. launched with google labs.'],
+      shots: ['work/youtube-01.jpg', 'work/youtube-02.jpg', 'work/youtube-03.jpg',
+              'work/youtube-04.jpg', 'work/youtube-05.jpg']
+    },
+    google: {
+      tags: 'web, design system',
+      mode: 'page',
+      intro: ['google needed a landing page to show off the full pixel portfolio in one place.',
+              'as a senior designer at basic, i led design in partnership with the google pixel team, working inside their existing design system and extending it where the page asked for more.'],
+      shots: [{s:'work/google-01.jpg',w:1864,h:1314},
+              {s:'work/google-02.jpg',w:1864,h:1014},
+              {s:'work/google-03.jpg',w:1864,h:1130},
+              {s:'work/google-04.jpg',w:1864,h:332},
+              {s:'work/google-05.jpg',w:1864,h:1316},
+              {s:'work/google-06.jpg',w:1864,h:912},
+              {s:'work/google-07.jpg',w:1864,h:916},
+              {s:'work/google-08.jpg',w:1864,h:1162},
+              {s:'work/google-09.jpg',w:1864,h:832},
+              {s:'work/google-10.jpg',w:1864,h:1384},
+              {s:'work/google-11.jpg',w:1864,h:276},
+              {s:'work/google-12.jpg',w:1864,h:1000},
+              {s:'work/google-13.jpg',w:1864,h:1346},
+              {s:'work/google-14.jpg',w:1864,h:980},
+              {s:'work/google-15.jpg',w:1864,h:368},
+              {s:'work/google-16.jpg',w:1864,h:948},
+              {s:'work/google-17.jpg',w:1864,h:772},
+              {s:'work/google-18.jpg',w:1864,h:1288},
+              {s:'work/google-19.jpg',w:1864,h:978},
+              {s:'work/google-20.jpg',w:1864,h:1286},
+              {s:'work/google-21.jpg',w:1864,h:1180},
+              {s:'work/google-22.jpg',w:1864,h:1028},
+              {s:'work/google-23.jpg',w:1864,h:734}]
+    },
+    'apple tv': {
+      tags: 'web design',
+      mode: 'page',
+      intro: ['apple tv needed to refresh the press site where news about their shows goes out.',
+              'as lead designer at elephant, i worked with the apple tv team to define requirements for the site, push updates, and thoughtfully implement and extend their design system.'],
+      pageImage: { src: 'work/appletv-full.jpg', w: 2048, h: 6973, bands: 9 },
+      shots: []
+    }
+  };
+  var projWinCount = 0;
+  var openProjects = {};
+  function shotTargetWidth(el, fallback) {
+    var css = el.clientWidth || fallback;
+    return Math.round(css * (window.devicePixelRatio || 1));
+  }
+  function shotSrc(x) { return typeof x === 'string' ? x : x.s; }
+  function shotAspect(x) {
+    return (x && typeof x === 'object' && x.w && x.h) ? (x.w + '/' + x.h) : null;
+  }
+  /* dither one horizontal band of a source image (used for full-page captures) */
+  function ditherBand(img, sx, sy, sw, sh, targetW) {
+    var scale = Math.min(1, targetW / sw);
+    var w = Math.max(1, Math.round(sw * scale));
+    var h = Math.max(1, Math.round(sh * scale));
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var ctx = c.getContext('2d');
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+    var d;
+    try { d = ctx.getImageData(0, 0, w, h); } catch (e) { return null; }
+    var bayer = [[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+    var px = d.data;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var i = (y * w + x) * 4;
+        var lum = 0.299 * px[i] + 0.587 * px[i+1] + 0.114 * px[i+2];
+        var t = (bayer[y & 3][x & 3] + 0.5) / 16 * 255;
+        var on = lum > t;
+        px[i] = on ? 0xd3 : 0x00; px[i+1] = on ? 0xcb : 0x00;
+        px[i+2] = on ? 0xba : 0x00; px[i+3] = 255;
+      }
+    }
+    ctx.putImageData(d, 0, 0);
+    return c;
+  }
+  /* one master image, sliced into bands in the browser */
+  var pageImageCache = {};
+  function loadPageImage(url) {
+    if (pageImageCache[url]) return pageImageCache[url];
+    pageImageCache[url] = new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = reject;
+      img.src = url;
+    });
+    return pageImageCache[url];
+  }
+  function mountBand(fig, spec) {
+    fig.dataset.band = '1';
+    loadPageImage(spec.src).then(function (img) {
+      var target = shotTargetWidth(fig, 560);
+      var c = ditherBand(img, 0, spec.sy, spec.sw, spec.sh, target);
+      if (!c) { fig.innerHTML = '<p class="shot-loading">image unavailable</p>'; return; }
+      c.className = 'shot-band';
+      fig.innerHTML = '';
+      fig.appendChild(c);
+      var colour = document.createElement('div');
+      colour.className = 'band-colour';
+      /* a percentage background-position resolves against (container - image), so the
+         offset for a band starting at sy is sy / (fullHeight - bandHeight) */
+      var span = img.naturalHeight - spec.sh;
+      colour.style.backgroundImage = 'url(' + spec.src + ')';
+      colour.style.backgroundSize = '100% auto';
+      colour.style.backgroundPosition = '0 ' + (span > 0 ? (spec.sy / span * 100) : 0) + '%';
+      colour.style.backgroundRepeat = 'no-repeat';
+      fig.appendChild(colour);
+      if (coarsePointer.matches) {
+        fig.addEventListener('click', function () {
+          var group = fig.closest('.shot-page');
+          (group || fig).classList.toggle('is-color');
+        });
+      }
+    }).catch(function () {
+      fig.innerHTML = '<p class="shot-loading">image unavailable</p>';
+    });
+  }
+  function mountShot(fig, url) {
+    fig.dataset.src = url;
+    var img = new Image();
+    var target = shotTargetWidth(fig, 560);
+    img.onload = function () {
+      var c = ditherToCanvas(img, target);
+      if (!c) { fig.innerHTML = '<p class="shot-loading">image unavailable</p>'; return; }
+      fig.innerHTML = '';
+      fig.appendChild(c);
+      var colour = document.createElement('img');
+      colour.src = url;
+      colour.alt = '';
+      fig.appendChild(colour);
+      if (coarsePointer.matches) {
+        fig.addEventListener('click', function () {
+          var group = fig.closest('.shot-page');
+          (group || fig).classList.toggle('is-color');
+        });
+      }
+    };
+    img.onerror = function () { fig.innerHTML = '<p class="shot-loading">image unavailable</p>'; };
+    img.src = url;
+  }
+  var coarsePointer = window.matchMedia('(pointer: coarse)');
+  function openProjectWindow(name) {
+    var data = PROJECTS[name];
+    if (!data) return;
+    var existing = openProjects[name];
+    if (existing && document.body.contains(existing)) {
+      existing.hidden = false;
+      if (!mobile.matches) focusWin(existing);
+      else { var yy = existing.getBoundingClientRect().top + window.pageYOffset - 36; window.scrollTo(0, yy); }
+      return;
+    }
+    projWinCount++;
+    var win = document.createElement('section');
+    win.className = 'win';
+    win.id = 'win-proj-' + projWinCount;
+    win.style.cssText = 'left:' + (26 + (projWinCount % 4) * 3) + '%; top:' + (20 + (projWinCount % 4) * 4) + '%; width:min(672px, 50vw);';
+    var intro = data.intro.map(function (p) { return '<p>' + p + '</p>'; }).join('');
+    var shotList = data.shots;
+    if (data.pageImage) {
+      var p = data.pageImage, bands = [], n = p.bands, base = Math.floor(p.h / n), extra = p.h - base * n, yy = 0;
+      for (var bi = 0; bi < n; bi++) {
+        var bh = base + (bi < extra ? 1 : 0);
+        bands.push({ src: p.src, sy: yy, sw: p.w, sh: bh, w: p.w, h: bh });
+        yy += bh;
+      }
+      shotList = bands;
+    }
+    data.__shots = shotList;
+    var figs = shotList.map(function (x, i) {
+      var ar = shotAspect(x);
+      var style = ar ? ' style="aspect-ratio:' + ar + '"' : '';
+      return '<figure class="shot" data-shot="' + i + '"' + style + '></figure>';
+    }).join('');
+    if (data.mode === 'page') figs = '<div class="shot-page">' + figs + '</div>';
+    win.innerHTML =
+      '<header class="titlebar"><button class="wsquare" data-close aria-label="close ' + name + '"></button>' + name +
+        '<button class="wsquare wzoom" data-zoom aria-label="expand ' + name + '"></button></header>' +
+      '<div class="winbody"><div class="pane scrollframe" style="height:440px;">' +
+        '<div class="scrollcontent">' +
+          '<span class="proj-meta">' + data.tags + '</span>' +
+          '<div class="proj-intro">' + intro + '</div>' +
+          '<div class="proj-rule"></div>' +
+          '<p class="shot-hint">' + (coarsePointer.matches ? 'tap an image for full colour' : 'hover an image for full colour') + '</p>' +
+          figs +
+        '</div>' +
+        '<div class="rail">' +
+          '<button class="rail-up" aria-label="scroll up" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M4 1 L7 6 L1 6 Z" fill="currentColor"/></svg></button>' +
+          '<div class="rail-track"><div class="rail-thumb"></div></div>' +
+          '<button class="rail-down" aria-label="scroll down" tabindex="-1"><svg viewBox="0 0 8 8"><path d="M1 2 L7 2 L4 7 Z" fill="currentColor"/></svg></button>' +
+        '</div>' +
+      '</div></div>';
+    var clients = document.getElementById('win-clients');
+    if (mobile.matches && clients && clients.parentNode) clients.insertAdjacentElement('afterend', win);
+    else document.getElementById('desktop').appendChild(win);
+    initWindow(win);
+    var frame = win.querySelector('.scrollframe');
+    initScrollframe(frame);
+    initScrollSound(frame);
+    focusWin(win);
+    playOpen();
+    openProjects[name] = win;
+    win.__shots = data.__shots;
+    mountShotsLazily(win, data.__shots);
+    if (mobile.matches) {
+      var y = win.getBoundingClientRect().top + window.pageYOffset - 36;
+      window.scrollTo(0, y);
+    }
+  }
+  function mountShotsLazily(win, shots) {
+    var root = win.querySelector('.scrollcontent');
+    var figs = Array.prototype.slice.call(win.querySelectorAll('.shot'));
+    function mountAt(i) {
+      var fig = figs[i];
+      if (!fig || fig.dataset.mounted === '1') return;
+      fig.dataset.mounted = '1';
+      var spec = shots[i];
+      if (spec && spec.sy !== undefined) mountBand(fig, spec);
+      else mountShot(fig, shotSrc(spec));
+    }
+    if (!('IntersectionObserver' in window)) {
+      figs.forEach(function (_, i) { mountAt(i); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        mountAt(figs.indexOf(en.target));
+      });
+    }, { root: root, rootMargin: '800px 0px' });
+    figs.forEach(function (f) { io.observe(f); });
+  }
+  function redither(win) {
+    if (!win.__shots) return;
+    win.querySelectorAll('.shot').forEach(function (fig) {
+      fig.innerHTML = '';
+      fig.dataset.mounted = '';
+      fig.dataset.band = '';
+      fig.dataset.src = '';
+    });
+    mountShotsLazily(win, win.__shots);
+  }
+  function toggleZoom(win) {
+    var pane = win.querySelector('.pane');
+    var desk = document.getElementById('desktop').getBoundingClientRect();
+    if (win.dataset.zoomed) {
+      win.style.cssText = win.dataset.prevStyle || '';
+      pane.style.height = win.dataset.prevPaneH || '';
+      delete win.dataset.zoomed;
+    } else {
+      win.dataset.prevStyle = win.style.cssText;
+      win.dataset.prevPaneH = pane.style.height;
+      win.style.left = '2%';
+      win.style.top = '1.5%';
+      win.style.right = 'auto';
+      win.style.bottom = 'auto';
+      win.style.width = '96%';
+      pane.style.height = Math.max(240, Math.round(desk.height * 0.955) - 52) + 'px';
+      win.dataset.zoomed = '1';
+    }
+    focusWin(win);
+    playOpen();
+    redither(win);
+  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-zoom]');
+    if (!btn || mobile.matches) return;
+    e.stopPropagation();
+    var win = btn.closest('.win');
+    if (win) toggleZoom(win);
   });
 
-  /* ui sounds: five stone impacts, one per project row (sliced from stones.m4a) */
+  document.querySelectorAll('button.wl-row[data-soon]').forEach(function (b) {
+    var nameEl = b.querySelector('.wl-name');
+    var name = nameEl ? nameEl.textContent.trim() : '';
+    b.removeAttribute('title');
+    b.addEventListener('click', function () { openProjectWindow(name); });
+  });
+
+  /* ui sounds: five stone impacts, sliced from stones.m4a */
   var STONES = [
     { start: 0.000, dur: 0.60 },
     { start: 1.305, dur: 0.60 },
