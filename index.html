@@ -18,6 +18,20 @@
 <meta name="twitter:title" content="Justin Reyna">
 <meta name="twitter:description" content="creative technologist. open to collaborations.">
 <meta name="twitter:image" content="https://justinreyna.design/og.jpg">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5H5JDX42QB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5H5JDX42QB');
+  /* every call site goes through this: never throws, and no-ops when the
+     tag is blocked, so analytics can never break the site */
+  window.track = function (name, params) {
+    try { gtag('event', name, params || {}); } catch (e) {}
+  };
+</script>
+
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Person","name":"Justin Reyna","url":"https://justinreyna.design/","email":"mailto:hi@justinreyna.design","jobTitle":"Creative Technologist","sameAs":["https://www.linkedin.com/in/justinreyreyna/"]}
 </script>
@@ -740,10 +754,26 @@ const FRAMES=[["         .                                                      
     }, 120);
   });
 
+  /* outbound + email clicks, delegated so dynamically added are.na links count too */
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (/^https?:/i.test(href)) {
+      var host = '';
+      try { host = new URL(href, location.href).host.replace(/^www\./, ''); } catch (err) {}
+      track('outbound_click', { link_url: href, link_domain: host,
+                                link_text: (a.textContent || '').trim().slice(0, 60) });
+    } else if (/^mailto:/i.test(href)) {
+      track('email_click', { link_url: href });
+    }
+  }, true);
+
   document.querySelectorAll('.icon[data-open]').forEach(function (icon) {
     icon.addEventListener('click', function () {
       var win = document.getElementById(icon.getAttribute('data-open'));
       if (!win) return;
+      track('window_open', { window: icon.getAttribute('data-open') });
       if (win.hidden) playOpen();
       win.hidden = false;
       if (win.id === 'win-fieldnotes') loadArena();
@@ -842,6 +872,7 @@ const FRAMES=[["         .                                                      
   function openBlockWindow(block) {
     var id = 'win-block-' + (++blockWinCount);
     var title = block.__title || block.title || 'untitled';
+    track('arena_block_open', { block: String(title).slice(0, 100) });
     var win = document.createElement('section');
     win.className = 'win';
     win.id = id;
@@ -1114,6 +1145,7 @@ const FRAMES=[["         .                                                      
   function openProjectWindow(name) {
     var data = PROJECTS[name];
     if (!data) return;
+    track('project_open', { project: name });
     var existing = openProjects[name];
     if (existing && document.body.contains(existing)) {
       existing.hidden = false;
@@ -1168,6 +1200,21 @@ const FRAMES=[["         .                                                      
     var frame = win.querySelector('.scrollframe');
     initScrollframe(frame);
     initScrollSound(frame);
+    /* did they actually read it, or just open and bounce */
+    (function () {
+      var sc = frame.querySelector('.scrollcontent'), seen = {};
+      sc.addEventListener('scroll', function () {
+        var max = sc.scrollHeight - sc.clientHeight;
+        if (max <= 0) return;
+        var pct = sc.scrollTop / max * 100;
+        [25, 50, 75, 100].forEach(function (m) {
+          if (pct >= m - 1 && !seen[m]) {
+            seen[m] = 1;
+            track('project_scroll', { project: name, percent: m });
+          }
+        });
+      }, { passive: true });
+    })();
     focusWin(win);
     playOpen();
     openProjects[name] = win;
@@ -1213,6 +1260,9 @@ const FRAMES=[["         .                                                      
     mountShotsLazily(win, win.__shots);
   }
   function toggleZoom(win) {
+    var zt = win.querySelector('.titlebar');
+    track(win.dataset.zoomed ? 'window_unzoom' : 'window_zoom',
+          { window: zt ? zt.textContent.trim() : win.id });
     var pane = win.querySelector('.pane');
     var desk = document.getElementById('desktop').getBoundingClientRect();
     if (win.dataset.zoomed) {
