@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- source for /og.jpg (the link-preview card). render: see tools/og.sh -->
+<html lang="en"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@500..600&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="stylesheet" href="../styles/site.css">
+<style>
+  html, body { width: 1200px; height: 630px; margin: 0; overflow: hidden; }
+  body { padding: 32px; display: grid; }
+  .og { background-color: var(--card); background-image: var(--paper-grain); border-radius: 16px; padding: 56px 64px; display: flex; flex-direction: column; }
+  .og .top { display: flex; justify-content: space-between; font: 500 22px/1 var(--display); letter-spacing: var(--track-s); color: var(--mute); }
+  .og h1 { margin: auto 0 0; font: 600 128px/0.95 var(--display); letter-spacing: var(--track-xl); }
+  .og p { margin: 24px 0 40px; font: 400 34px/1.25 var(--body); letter-spacing: -0.015em; }
+  .og .tags { display: flex; gap: 10px; }
+  .og .tag { font-size: 20px; padding: 9px 16px 8px; }
+</style></head>
+<body><div class="og">
+  <div class="top"><span>Portfolio</span><span>justinreyna.design</span></div>
+  <h1>Justin Reyna</h1>
+  <p>Designer and creative technologist in Austin, Texas</p>
+  <div class="tags"><span class="tag" data-c="web">Web</span><span class="tag" data-c="system">Design systems</span><span class="tag" data-c="product">Product</span><span class="tag" data-c="brand">Brand</span><span class="tag" data-c="motion">Motion</span><span class="tag" data-c="ai">AI workflows</span></div>
+</div></body></html>

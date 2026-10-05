@@ -1,4 +1,12 @@
 # local working files, not part of the published site
 DIRECTION.md
-og.html
+/og.html
 work/shot-*.svg
+
+# trial fonts (Outline Online trial EULA): never publish. the site uses free Google fonts instead
+fonts/
+STYLE.md
+
+# local preview config
+.claude/
+.DS_Store

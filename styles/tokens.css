@@ -1,0 +1,63 @@
+/* justinreyna.design — locked tokens (2026-10-05)
+   decided in the type test at ~/Claude/Projects/portfolio-type-test; type changed
+   2026-10-05 from theran to host grotesk + instrument sans.
+   change a value here, not in a component. */
+
+/* Host Grotesk + Instrument Sans load from Google Fonts in the page head (both free, OFL) */
+
+:root {
+  /* type */
+  --display: "Host Grotesk", system-ui, sans-serif;     /* headings, names, labels, tags — weight 500 */
+  --body: "Instrument Sans", system-ui, sans-serif;     /* running text */
+  --display-features: normal;
+  /* display tracking, tighter as it gets bigger */
+  --track-xl: -0.05em;   /* logo */
+  --track-l: -0.035em;   /* titles, project names */
+  --track-s: -0.01em;    /* labels, tags, buttons */
+
+  /* ground: off-white paper */
+  --bg: #efeae0;
+  --fg: #141311;
+  --mute: rgba(20, 19, 17, .56);
+  --rule: rgba(20, 19, 17, .15);
+  --paper: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .305  0 0 0 0 .28  0 0 0 0 .24  0 0 0 .62 -.19'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.006 .012' numOctaves='4' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .425  0 0 0 0 .39  0 0 0 0 .33  0 0 0 .26 -.06'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  --paper-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .32  0 0 0 0 .27  0 0 0 0 .2  0 0 0 .3 -.1'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");  /* softer grain only — for cards, which read cleaner without the mottle */
+
+  /* tag palette — muted traditional japanese colours, one per discipline (hex approximate) */
+  --c-web: #60757d;      /* 藍鼠 ainezumi, indigo grey */
+  --c-system: #627866;   /* 錆青磁 sabiseiji, rusted celadon */
+  --c-product: #9f563a;  /* 柿渋 kakishibu, persimmon tannin */
+  --c-brand: #926b2f;    /* 黄土 odo, yellow ochre */
+  --c-motion: #6e6c9f;   /* 藤鼠 fujinezumi, wisteria grey */
+  --c-soon: #727171;     /* 鈍色 nibiiro, dull grey */
+  --c-ai: #393e4f;       /* 藍鉄 aitetsu, indigo iron */
+  --on-light: #fbf8f1;   /* text on product + soon */
+  --on-dark: #141311;    /* (unused since 2026-10-05: all tags carry white text) */
+}
+
+html { -webkit-font-smoothing: antialiased; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: var(--paper);
+  background-attachment: fixed;
+  color: var(--fg);
+  font: 16px/1.5 var(--body);
+}
+
+/* colour by discipline — any element with data-c gets --c (fill) and --on (text) */
+/* tags: solid pills */
+.tag {
+  display: inline-block; white-space: nowrap;
+  font: 500 var(--fs-ui, 14px)/1 var(--display); font-feature-settings: var(--display-features);
+  padding: 6px 12px 5px; border-radius: 999px;
+  background: var(--c); color: var(--on);
+}
+.tag.sm { font-size: var(--fs-tag-sm, 12px); padding: 4px 9px 3px; }
+[data-c="web"]     { --c: var(--c-web);     --on: var(--on-light); }
+[data-c="system"]  { --c: var(--c-system);  --on: var(--on-light); }
+[data-c="product"] { --c: var(--c-product); --on: var(--on-light); }
+[data-c="brand"]   { --c: var(--c-brand);   --on: var(--on-light); }
+[data-c="motion"]  { --c: var(--c-motion);  --on: var(--on-light); }
+[data-c="ai"]      { --c: var(--c-ai);      --on: var(--on-light); }
+[data-c="soon"]    { --c: var(--c-soon);    --on: var(--on-light); }
