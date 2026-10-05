@@ -1,0 +1,6 @@
+# cloudflare pages only (github pages skips files starting with _).
+# keep the *.pages.dev copies out of search; justinreyna.design is the one indexed.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

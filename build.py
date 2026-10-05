@@ -8,7 +8,10 @@ from html import escape
 ROOT = Path(__file__).resolve().parent
 SITE = "https://justinreyna.design"
 import time
-VER = int(time.time())  # cache-buster for css/js, new on every build
+import hashlib
+# cache-buster for css/js: a hash of their contents, so it only changes when they do
+# (and a rebuild with no edits produces identical html)
+VER = hashlib.sha1(b"".join(f.read_bytes() for f in sorted((ROOT / "styles").glob("*.css")) + sorted((ROOT / "scripts").glob("*.js")))).hexdigest()[:8]
 
 COLOR = {"web": "web", "web design": "web", "design system": "system", "design systems": "system",
          "product": "product", "product design": "product", "mvp design": "product",

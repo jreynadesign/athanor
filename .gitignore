@@ -10,3 +10,7 @@ STYLE.md
 # local preview config
 .claude/
 .DS_Store
+
+# cloudflare deploy staging
+out/
+.wrangler/
