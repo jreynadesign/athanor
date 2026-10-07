@@ -1,5 +1,5 @@
 /* phones + tablets only (the desktop rail already keeps the ask in view).
-   one floating "let's talk", bottom right, on every page: it comes in as soon as you start scrolling,
+   one floating "let's chat", bottom right, on every page: it comes in as soon as you start scrolling,
    and on the homepage steps aside a little before the "work together" card comes on screen, so the ask never shows twice. */
 (() => {
   const small = matchMedia('(max-width: 1100px)');

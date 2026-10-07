@@ -5,7 +5,7 @@
    email, only the chips (what / when) are counted.
 
    events
-     cta_click        a "let's talk" button      cta, placement
+     cta_click        a "let's chat" button      cta, placement
      select_content   a project row / next card  content_type, item_id, placement
      back_click       the ← on a project page    from
      outbound_click   any link off the site      link_url, link_domain, label

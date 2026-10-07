@@ -83,7 +83,7 @@ def head(title, path="/", desc=DESC, index=True):
 <div class="page">
 <nav class="bar" aria-label="primary">
   <a class="chip-link me back" href="/" aria-label="Back to home" data-track="back_click" data-track-from="{path}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
-  <a class="chip-link dark talk" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="project_nav">Let’s talk <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a>
+  <a class="chip-link dark talk" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="project_nav">Let’s chat <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a>
 </nav>
 """
 
@@ -322,7 +322,7 @@ ALT = {
 
 
 # the floating "let's talk" (phones + tablets): the same button as the project-page header, bottom right
-FAB = '<div class="fab" inert><a class="talk-btn" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="floating">Let’s talk <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a></div>'
+FAB = '<div class="fab" inert><a class="talk-btn" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="floating">Let’s chat <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a></div>'
 
 
 def home():
@@ -365,7 +365,7 @@ def home():
       <span class="label">Work together</span>
       <p class="ask">Have a project in mind?</p>
       <div class="actions">
-        <a class="action primary" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="home_rail">Let’s talk <span class="plus chat" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a>
+        <a class="action primary" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="home_rail">Let’s chat <span class="plus chat" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a>
       </div>
       <nav class="elsewhere" aria-label="elsewhere">
         <a href="https://www.linkedin.com/in/justinreyreyna/" target="_blank" rel="noreferrer">LinkedIn</a>

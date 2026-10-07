@@ -79,7 +79,7 @@ h1, h2, h3, .title { text-wrap: balance; }
 .bar .dark { background: var(--fg); color: var(--bg); }
 .bar .talk { gap: 10px; }
 .bar .talk svg { width: 18px; height: 18px; margin-top: -1px; }
-/* "let's talk" button, shared by the project header and the floating button */
+/* "let's chat" button, shared by the project header and the floating button */
 .talk-btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 1px 20px 0; border-radius: var(--r-in);
             background: var(--fg); color: var(--bg); text-decoration: none; font: 500 var(--fs-ui)/1 var(--display); font-feature-settings: var(--display-features);
             box-shadow: 0 2px 4px rgba(20, 19, 17, .12), 0 6px 14px rgba(20, 19, 17, .16); }   /* short: reaches ~20px down, clear of
@@ -391,11 +391,8 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
 /* ---------- phones + tablets: the ask stays in reach (scripts/float.js) ---------- */
 .fab { display: none; }
 @media (max-width: 1100px) {
-  /* homepage: a wide "let's talk" bar that rises from the bottom once you're past the first screen.
-     iOS 26 safari tints its toolbar from the background-color of fixed elements at the bottom edge,
-     so the fixed element is a transparent, full-width wrapper on the edge and the black button lives inside it */
-  /* one floating "let's talk" across the site, bottom right: the same black button as the project header.
-     not full width, so iOS 26 safari doesn't read it as an edge bar and tint its toolbar black */
+  /* one floating "let's chat" across the site, bottom right: the same black button as the desktop project header.
+     not full width, so iOS 26 safari doesn't read it as an edge bar and tint its toolbar black (it did, for a wide bar) */
   .fab { display: block; position: fixed; z-index: 40; right: var(--margin); bottom: calc(var(--margin) + env(safe-area-inset-bottom));
          transform: translateX(calc(100% + var(--margin) + 8px)); visibility: hidden;   /* parked just off the right edge; slides in sideways */
          transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
