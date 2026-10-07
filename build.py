@@ -247,10 +247,9 @@ def home_head(title, **kw):
 
 
 # "start a project" modal, shared by the homepage and the project pages (their contact button)
-PROJECT_DIALOG = f"""<dialog class="modal" id="project-dialog" data-lenis-prevent aria-labelledby="pd-h">
+PROJECT_DIALOG = f"""<dialog class="modal" id="project-dialog" data-lenis-prevent aria-labelledby="pd-h" tabindex="-1">
   <form id="project-form" class="modal-body">
     <header class="modal-head"><h2 class="title" id="pd-h">Start a project</h2><button type="button" class="close" data-close aria-label="Close"></button></header>
-    <p class="modal-lede">Tell me a little about what you're working on.</p>
     <div class="form-rows">
       <label class="frow"><span class="flabel">Name</span><input name="name" required autocomplete="name" placeholder="Your name"></label>
       <label class="frow"><span class="flabel">Email</span><input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label>
@@ -259,7 +258,7 @@ PROJECT_DIALOG = f"""<dialog class="modal" id="project-dialog" data-lenis-preven
         <div class="picks">{''.join(f'<label class="pick" data-c="{COLOR[t]}"><input type="checkbox" name="needs" value="{SHOW.get(t, t[0].upper() + t[1:])}"><span>{SHOW.get(t, t[0].upper() + t[1:])}</span></label>' for t in ['web', 'design systems', 'product', 'brand', 'motion', 'ai workflows'])}</div>
       </fieldset>
       <fieldset class="frow"><legend class="flabel">Timeline</legend>
-        <div class="picks">{''.join(f'<label class="pick ink"><input type="radio" name="timeline" value="{v}"{" checked" if i == 1 else ""}><span>{v}</span></label>' for i, v in enumerate(["As soon as possible", "1–3 months", "3+ months", "Just exploring"]))}</div>
+        <div class="picks">{''.join(f'<label class="pick ink"><input type="radio" name="timeline" value="{v}"><span>{v}</span></label>' for i, v in enumerate(["As soon as possible", "1–3 months", "3+ months", "Just exploring"]))}</div>
       </fieldset>
       <label class="frow top"><span class="flabel">About</span><textarea name="message" rows="4" required placeholder="The problem, the goal, anything useful"></textarea></label>
     </div>

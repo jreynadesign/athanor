@@ -18,7 +18,9 @@
       dlg.showModal();
       // with a mouse and keyboard, jump straight into the first field. on touch screens don't:
       // focusing a field throws up the keyboard before the sheet has even landed
+      // touch: the sheet itself takes focus, so no field (keyboard) and no button (focus ring) lights up
       if (matchMedia('(pointer: fine)').matches) dlg.querySelector('input, textarea, select')?.focus();
+      else dlg.focus();
     });
   });
 
@@ -45,11 +47,12 @@
     const lines = [`Name: ${name}`, `Email: ${f.get('email').trim()}`];
     if (company) lines.push(`Company: ${company}`);
     if (needs.length) lines.push(`Looking for: ${needs.join(', ')}`);
-    lines.push(`Timeline: ${f.get('timeline')}`, '', f.get('message').trim());
+    if (f.get('timeline')) lines.push(`Timeline: ${f.get('timeline')}`);   // optional: nothing is pre-picked
+    lines.push('', f.get('message').trim());
     // counts what and when only — never the name, email or message
     const dlg = project.closest('dialog');
     dlg.dataset.sent = '1';
-    track('generate_lead', { form: 'project-dialog', placement: dlg.dataset.placement, needs: needs.join(', ') || 'none', timeline: f.get('timeline') });
+    track('generate_lead', { form: 'project-dialog', placement: dlg.dataset.placement, needs: needs.join(', ') || 'none', timeline: f.get('timeline') || 'none' });
     const body = lines.join('\n');
     location.href = `mailto:${TO}?subject=${encodeURIComponent(`New project — ${name}`)}&body=${encodeURIComponent(body)}`;
     project.querySelector('.sent').hidden = false;

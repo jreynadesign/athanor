@@ -245,6 +245,7 @@ a.row:active, .cv.writing a:active { background: var(--tint); }
    no boxes. the row being typed in darkens its line. */
 .modal { width: min(640px, calc(100vw - 32px)); max-height: calc(100svh - 48px); padding: 0; border: 0; border-radius: var(--r); background-color: var(--card); background-image: var(--paper-grain); color: var(--fg); box-shadow: 0 24px 80px rgba(20, 19, 17, .28); }
 .modal.small { width: min(480px, calc(100vw - 32px)); }
+.modal:focus { outline: none; }   /* the sheet takes focus on touch screens; no ring around the whole thing */
 .modal::backdrop { background: rgba(20, 19, 17, .42); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
 .modal-body { display: grid; gap: var(--gap); padding: calc(var(--pad) + 24px) var(--pad) var(--pad); }  /* extra air above the headline */
 .modal-head { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -269,7 +270,7 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
 .frow input, .frow textarea { width: 100%; padding: 0; border: 0; background: none; color: var(--fg); font: var(--fs-ui)/1.45 var(--body); letter-spacing: -0.01em; }
 .frow input::placeholder, .frow textarea::placeholder { color: var(--mute); opacity: .7; }
 .frow input:focus, .frow textarea:focus { outline: none; }
-.frow textarea { resize: vertical; min-height: 96px; }
+.frow textarea { display: block; resize: vertical; min-height: 96px; }   /* block: no inline descender gap underneath */
 
 .picks { display: flex; flex-wrap: wrap; gap: 6px; }
 /* chips: outlined until picked, then filled — discipline colour for needs, ink for timeline */
@@ -380,7 +381,13 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
   .rail .about.scrolls { height: min(340px, 48svh); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
   .rail .about.scrolls::-webkit-scrollbar { display: none; }
   .rail .about.scrolls.has-more { -webkit-mask-image: linear-gradient(#000 calc(100% - 56px), transparent); mask-image: linear-gradient(#000 calc(100% - 56px), transparent); }
-  .frow { grid-template-columns: 1fr; gap: 8px; }
+  /* phones: label above field, one rhythm for every row (block layout: safari won't put a legend in a grid row) */
+  .frow { display: block; padding: 20px 0; }
+  .frow > .flabel { display: block; float: left; width: 100%; margin-bottom: 10px; }
+  .frow > .flabel + * { clear: both; }
+  .frow input, .frow textarea { font-size: var(--fs-body); }   /* 20px: under 16px, iOS zooms the page when a field is tapped */
+  .picks { gap: 8px; }
+  .pick span { display: inline-flex; align-items: center; min-height: 44px; padding: 1px 16px 0; }   /* apple's 44pt minimum tap target */
 }
 
 /* display weights — three tiers, chosen 2026-10-05 with a dev weight switcher */
@@ -418,7 +425,7 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
                          overscroll-behavior: contain; }
   .modal[open] { animation: sheet-up .38s cubic-bezier(.2, .8, .2, 1); }
   .modal-body { min-height: 100%; align-content: start; padding: 20px var(--pad) calc(var(--pad) + env(safe-area-inset-bottom)); }
-  .modal-head { flex-direction: column-reverse; align-items: stretch; gap: 28px; margin-bottom: 8px; }
+  .modal-head { flex-direction: column-reverse; align-items: stretch; gap: 24px; margin-bottom: 16px; }
   .modal-head .close { align-self: flex-end; width: 48px; height: 48px; background: var(--fg); }
   .modal-head .close::before, .modal-head .close::after { width: 16px; height: 2px; background: var(--bg); }
   .modal-head .title { margin: 0; font-size: var(--fs-name-lg); line-height: 1; text-wrap: balance; }
