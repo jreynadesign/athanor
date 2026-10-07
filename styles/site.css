@@ -399,18 +399,14 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
          transform: translateY(calc(100% + 24px + var(--margin))); visibility: hidden;
          transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
   .fab.show { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-  /* on project pages the floating button takes over the ask; the header keeps the ← */
-  .project-rail .bar .talk { display: none; }
-
-  /* project pages: the header sticks, tucks away on the way down, returns on the way up */
-  .project-rail .bar { position: sticky; top: 0; z-index: 40; pointer-events: none;   /* only the buttons catch taps, not the strip between them */
-                       transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
-  .project-rail .bar > * { pointer-events: auto; transition: box-shadow .2s; }
-  .project-rail .bar.lifted > * { box-shadow: 0 6px 20px rgba(20, 19, 17, .14); }   /* shadow only once it floats over the images */
-  .project-rail .bar.tucked { transform: translateY(-100%); }
+  /* project pages: no header. the floating button carries the ask; the browser's own back gesture does the rest.
+     the page starts at the same height as the homepage */
+  .project-rail .bar { display: none; }
+  .project { padding-top: 72px; }
 }
+@media (max-width: 640px) { .project { padding-top: 40px; } }   /* phones: same start as the homepage */
 @media (max-width: 1100px) and (prefers-reduced-motion: reduce) {
-  .fab, .fab.show, .project-rail .bar { transition: none; }
+  .fab, .fab.show { transition: none; }
 }
 
 /* ---------- phones: the forms open as a full-screen sheet that slides up from the bottom ---------- */
