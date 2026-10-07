@@ -397,7 +397,7 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
   /* one floating "let's talk" across the site, bottom right: the same black button as the project header.
      not full width, so iOS 26 safari doesn't read it as an edge bar and tint its toolbar black */
   .fab { display: block; position: fixed; z-index: 40; right: var(--margin); bottom: calc(var(--margin) + env(safe-area-inset-bottom));
-         transform: translateY(calc(100% + 24px + var(--margin))); visibility: hidden;
+         transform: translateX(calc(100% + var(--margin) + 8px)); visibility: hidden;   /* parked just off the right edge; slides in sideways */
          transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
   .fab.show { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
   /* project pages: no header. the floating button carries the ask; the browser's own back gesture does the rest.
