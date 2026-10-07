@@ -387,11 +387,12 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
   /* homepage: a wide "let's talk" bar that rises from the bottom once you're past the first screen.
      iOS 26 safari tints its toolbar from the background-color of fixed elements at the bottom edge,
      so the fixed element is a transparent, full-width wrapper on the edge and the black button lives inside it */
-  .fab { display: block; position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; background-color: transparent; pointer-events: none;
+  /* compact pill, bottom right. not full width, so iOS 26 safari doesn't treat it as an edge bar and tint its toolbar */
+  .fab { display: block; position: fixed; z-index: 40; right: 0; bottom: 0; pointer-events: none;
          padding: 0 var(--margin) calc(var(--margin) + env(safe-area-inset-bottom));
-         transform: translateY(100%); visibility: hidden; transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
+         transform: translateY(calc(100% + 24px)); visibility: hidden; transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
   .fab.show { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-  .fab .action { pointer-events: auto; max-width: 520px; margin-inline: auto; padding: 10px 10px 10px 20px; box-shadow: 0 10px 30px rgba(20, 19, 17, .22); }
+  .fab .action { pointer-events: auto; gap: 14px; border-radius: 999px; padding: 6px 6px 6px 20px; box-shadow: 0 10px 30px rgba(20, 19, 17, .22); }
 
   /* project pages: the header sticks, tucks away on the way down, returns on the way up */
   .project-rail .bar { position: sticky; top: 0; z-index: 40; pointer-events: none;   /* only the buttons catch taps, not the strip between them */
