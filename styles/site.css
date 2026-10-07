@@ -406,6 +406,18 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
   .fab, .fab.show, .project-rail .bar { transition: none; }
 }
 
+/* ---------- phones: the forms open as a full-screen sheet that slides up from the bottom ---------- */
+@media (max-width: 640px) {
+  .modal, .modal.small { position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-width: 100%;
+                         height: calc(100dvh - 24px); max-height: none;     /* a sliver of the page stays visible above it */
+                         border-radius: var(--r) var(--r) 0 0; box-shadow: 0 -12px 40px rgba(20, 19, 17, .18);
+                         overscroll-behavior: contain; }
+  .modal[open] { animation: sheet-up .38s cubic-bezier(.2, .8, .2, 1); }
+  .modal-body { min-height: 100%; align-content: start; padding-bottom: calc(var(--pad) + env(safe-area-inset-bottom)); }
+}
+@keyframes sheet-up { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .modal[open] { animation: none; } }
+
 /* ---------- 404 ---------- */
 .lost { min-height: 100svh; display: grid; place-items: center; padding: var(--frame) 0; }
 .lost .card { width: min(520px, 100%); gap: 16px; }
