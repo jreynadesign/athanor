@@ -249,7 +249,8 @@ def home_head(title, **kw):
 # "start a project" modal, shared by the homepage and the project pages (their contact button)
 PROJECT_DIALOG = f"""<dialog class="modal" id="project-dialog" data-lenis-prevent aria-labelledby="pd-h" tabindex="-1">
   <form id="project-form" class="modal-body">
-    <header class="modal-head"><h2 class="title" id="pd-h">Start a project</h2><button type="button" class="close" data-close aria-label="Close"></button></header>
+    <button type="button" class="close" data-close aria-label="Close"></button>
+    <header class="modal-head"><h2 class="title" id="pd-h">Start a project</h2></header>
     <div class="form-rows">
       <label class="frow"><span class="flabel">Name</span><input name="name" required autocomplete="name" placeholder="Your name"></label>
       <label class="frow"><span class="flabel">Email</span><input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label>
@@ -275,7 +276,8 @@ NEWSLETTER = False
 NEWSLETTER_LINK = '        <a href="#newsletter-dialog" data-open="newsletter-dialog">Newsletter</a>\n' if NEWSLETTER else ""
 NEWSLETTER_DIALOG = f"""<dialog class="modal small" id="newsletter-dialog" data-lenis-prevent aria-labelledby="nd-h">
   <form id="newsletter-form" class="modal-body">
-    <header class="modal-head"><h2 class="title" id="nd-h">Newsletter</h2><button type="button" class="close" data-close aria-label="Close"></button></header>
+    <button type="button" class="close" data-close aria-label="Close"></button>
+    <header class="modal-head"><h2 class="title" id="nd-h">Newsletter</h2></header>
     <p class="modal-lede">Occasional notes on new work and experiments.</p>
     <div class="form-rows">
       <label class="frow"><span class="flabel">Email</span><input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label>

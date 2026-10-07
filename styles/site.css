@@ -248,7 +248,9 @@ a.row:active, .cv.writing a:active { background: var(--tint); }
 .modal:focus { outline: none; }   /* the sheet takes focus on touch screens; no ring around the whole thing */
 .modal::backdrop { background: rgba(20, 19, 17, .42); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
 .modal-body { display: grid; gap: var(--gap); padding: calc(var(--pad) + 24px) var(--pad) var(--pad); }  /* extra air above the headline */
-.modal-head { display: flex; justify-content: space-between; align-items: flex-start; }
+.modal-body { position: relative; }
+.modal-head { padding-right: 56px; }   /* room for the close button, which sits top right, outside the header so it can stay pinned on phones */
+.modal-body > .close { position: absolute; top: calc(var(--pad) + 20px); right: var(--pad); z-index: 2; }
 /* modal titles use the page's headline style (project names, +4) — a modal is its own moment */
 .modal-head .title { font: 600 var(--fs-name)/1 var(--display); letter-spacing: var(--track-l); margin-top: -4px; }
 .modal-lede { font-size: var(--fs-ui); line-height: 1.45; color: var(--mute); }
@@ -425,9 +427,11 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
                          overscroll-behavior: contain; }
   .modal[open] { animation: sheet-up .38s cubic-bezier(.2, .8, .2, 1); }
   .modal-body { min-height: 100%; align-content: start; padding: 20px var(--pad) calc(var(--pad) + env(safe-area-inset-bottom)); }
-  .modal-head { flex-direction: column-reverse; align-items: stretch; gap: 24px; margin-bottom: 16px; }
-  .modal-head .close { align-self: flex-end; width: 48px; height: 48px; background: var(--fg); }
-  .modal-head .close::before, .modal-head .close::after { width: 16px; height: 2px; background: var(--bg); }
+  /* the close button stays pinned top right while the form scrolls under it, like rivian's */
+  .modal-body > .close { position: sticky; top: 16px; justify-self: end; margin-bottom: 12px; width: 48px; height: 48px; background: var(--fg);
+                         box-shadow: 0 2px 4px rgba(20, 19, 17, .12), 0 6px 14px rgba(20, 19, 17, .16); }
+  .modal-body > .close::before, .modal-body > .close::after { width: 16px; height: 2px; background: var(--bg); }
+  .modal-head { padding-right: 0; margin-bottom: 16px; }
   .modal-head .title { margin: 0; font-size: var(--fs-name-lg); line-height: 1; text-wrap: balance; }
 }
 @keyframes sheet-up { from { transform: translateY(100%); } }
