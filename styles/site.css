@@ -434,7 +434,9 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
   /* the form scrolls inside the sheet; the close button hangs off the sheet itself, outside the scroller,
      so it never moves, not even when iOS rubber-bands the form at either end */
   .modal, .modal.small { overflow: hidden; }
-  .modal-body { position: static; height: 100%; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-top: 80px; }
+  .modal-body { position: static; height: 100%; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-top: 80px;
+                background-color: var(--card); background-image: var(--paper-grain); }   /* the scroller carries the sheet's paper: it's the
+                layer touching the bottom edge, and safari takes its toolbar colour from that layer (transparent read as grey) */
   .modal-body > .close { position: absolute; top: 20px; right: var(--pad); width: 48px; height: 48px; background: var(--fg); }
   .modal-body > .close::before, .modal-body > .close::after { width: 16px; height: 2px; background: var(--bg); }
   .modal-head { padding-right: 0; margin-bottom: 16px; }
