@@ -321,6 +321,10 @@ ALT = {
 }
 
 
+# the floating "let's talk" (phones + tablets): the same button as the project-page header, bottom right
+FAB = '<div class="fab" inert><a class="talk-btn" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="floating">Let’s talk <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a></div>'
+
+
 def home():
     rows = []
     for i, p in enumerate(PROJECTS, 1):
@@ -411,7 +415,7 @@ def home():
 
 </div>
 
-<div class="fab" inert><a class="action primary" href="mailto:hi@justinreyna.design?subject=New%20project" data-open="project-dialog" data-track="cta_click" data-track-cta="lets_talk" data-track-placement="floating">Let’s talk <span class="plus chat" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span></a></div>
+{FAB}
 
 {PROJECT_DIALOG}
 {NEWSLETTER_DIALOG if NEWSLETTER else ""}<script src="/scripts/contact.js?v={VER}" defer></script>
@@ -450,6 +454,7 @@ def project(i, p):
   <main id="main" class="plates">{plates}</main>
 </div>
 
+{FAB}
 {PROJECT_DIALOG}<script src="/scripts/contact.js?v={VER}" defer></script>
 <script src="/scripts/rail.js?v={VER}" defer></script>
 <script src="/scripts/float.js?v={VER}" defer></script>

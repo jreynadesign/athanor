@@ -79,6 +79,12 @@ h1, h2, h3, .title { text-wrap: balance; }
 .bar .dark { background: var(--fg); color: var(--bg); }
 .bar .talk { gap: 10px; }
 .bar .talk svg { width: 18px; height: 18px; margin-top: -1px; }
+/* "let's talk" button, shared by the project header and the floating button */
+.talk-btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 1px 20px 0; border-radius: var(--r-in);
+            background: var(--fg); color: var(--bg); text-decoration: none; font: 500 var(--fs-ui)/1 var(--display); font-feature-settings: var(--display-features);
+            box-shadow: 0 10px 30px rgba(20, 19, 17, .22); }
+.talk-btn svg { width: 18px; height: 18px; margin-top: -1px; }
+@media (hover: hover) { .talk-btn:hover { background: color-mix(in oklab, var(--fg) 82%, var(--bg)); } }
 .bar .dark:hover { background: color-mix(in oklab, var(--fg) 82%, var(--bg)); }
 
 /* ---------- home: sticky rail (1/4) + scrolling work (3/4) ---------- */
@@ -387,12 +393,14 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
   /* homepage: a wide "let's talk" bar that rises from the bottom once you're past the first screen.
      iOS 26 safari tints its toolbar from the background-color of fixed elements at the bottom edge,
      so the fixed element is a transparent, full-width wrapper on the edge and the black button lives inside it */
-  /* compact pill, bottom right. not full width, so iOS 26 safari doesn't treat it as an edge bar and tint its toolbar */
-  .fab { display: block; position: fixed; z-index: 40; right: 0; bottom: 0; pointer-events: none;
-         padding: 0 var(--margin) calc(var(--margin) + env(safe-area-inset-bottom));
-         transform: translateY(calc(100% + 24px)); visibility: hidden; transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
+  /* one floating "let's talk" across the site, bottom right: the same black button as the project header.
+     not full width, so iOS 26 safari doesn't read it as an edge bar and tint its toolbar black */
+  .fab { display: block; position: fixed; z-index: 40; right: var(--margin); bottom: calc(var(--margin) + env(safe-area-inset-bottom));
+         transform: translateY(calc(100% + 24px + var(--margin))); visibility: hidden;
+         transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
   .fab.show { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-  .fab .action { pointer-events: auto; gap: 14px; border-radius: 999px; padding: 6px 6px 6px 20px; box-shadow: 0 10px 30px rgba(20, 19, 17, .22); }
+  /* on project pages the floating button takes over the ask; the header keeps the ← */
+  .project-rail .bar .talk { display: none; }
 
   /* project pages: the header sticks, tucks away on the way down, returns on the way up */
   .project-rail .bar { position: sticky; top: 0; z-index: 40; pointer-events: none;   /* only the buttons catch taps, not the strip between them */
