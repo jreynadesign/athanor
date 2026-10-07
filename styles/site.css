@@ -430,10 +430,12 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
      bottom edge matters: iOS 26 safari colours its toolbar from whatever fixed layer touches the edge, and a
      full-height backdrop turned it grey; this way it picks up the sheet */
   .modal::backdrop { inset: 0 0 auto; height: calc(56px + 24px); }
-  .modal-body { min-height: 100%; align-content: start; padding: 20px var(--pad) calc(var(--pad) + env(safe-area-inset-bottom)); }
-  /* the close button stays pinned top right while the form scrolls under it, like rivian's */
-  .modal-body > .close { position: sticky; top: 16px; justify-self: end; margin-bottom: 12px; width: 48px; height: 48px; background: var(--fg);
-                         box-shadow: 0 2px 4px rgba(20, 19, 17, .12), 0 6px 14px rgba(20, 19, 17, .16); }
+  .modal-body { align-content: start; padding: 20px var(--pad) calc(var(--pad) + env(safe-area-inset-bottom)); }
+  /* the form scrolls inside the sheet; the close button hangs off the sheet itself, outside the scroller,
+     so it never moves, not even when iOS rubber-bands the form at either end */
+  .modal, .modal.small { overflow: hidden; }
+  .modal-body { position: static; height: 100%; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-top: 80px; }
+  .modal-body > .close { position: absolute; top: 20px; right: var(--pad); width: 48px; height: 48px; background: var(--fg); }
   .modal-body > .close::before, .modal-body > .close::after { width: 16px; height: 2px; background: var(--bg); }
   .modal-head { padding-right: 0; margin-bottom: 16px; }
   .modal-head .title { margin: 0; font-size: var(--fs-name-lg); line-height: 1; text-wrap: balance; }
