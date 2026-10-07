@@ -16,7 +16,9 @@
       dlg.dataset.placement = btn.dataset.trackPlacement || '';
       dlg.dataset.sent = dlg.dataset.started = '';
       dlg.showModal();
-      dlg.querySelector('input, textarea, select')?.focus();
+      // with a mouse and keyboard, jump straight into the first field. on touch screens don't:
+      // focusing a field throws up the keyboard before the sheet has even landed
+      if (matchMedia('(pointer: fine)').matches) dlg.querySelector('input, textarea, select')?.focus();
     });
   });
 
