@@ -14,8 +14,13 @@
     new IntersectionObserver(([e]) => { cardInView = e.isIntersecting; update(); }, { rootMargin: '0px 0px 33% 0px' }).observe(card);
   }
 
+  // two thresholds: it appears once you're 60% of a screen down, but once out it stays until you're
+  // back at the very top, so scrolling up to re-read the intro doesn't send it away
+  let out = false;
   function update() {
-    const show = small.matches && scrollY > innerHeight * 0.6 && !cardInView;
+    if (scrollY > innerHeight * 0.6) out = true;
+    else if (scrollY < 80) out = false;
+    const show = small.matches && out && !cardInView;
     fab.classList.toggle('show', show);
     fab.inert = !show;   // hidden means hidden for keyboards and screen readers too
   }
