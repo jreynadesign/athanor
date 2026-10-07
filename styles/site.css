@@ -44,7 +44,14 @@ img { display: block; max-width: 100%; height: auto; }
 .skip { position: absolute; left: -999px; }
 .skip:focus { left: 16px; top: 16px; background: var(--fg); color: var(--bg); padding: 8px 12px; z-index: 10; }
 
-body { background-color: var(--ground); }
+/* the paper lives on a fixed layer behind everything. body's own colour is the paper's average tone,
+   because iOS 26 Safari tints its top and bottom bars from body's background-color (it ignores theme-color).
+   measured from the rendered texture: #dfdcd5. the page looks identical; safari's bars now match it. */
+:root { --paper-tone: #dfdcd5; }
+html, body { background-color: var(--paper-tone); }
+body { background-image: none; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+               background-color: transparent; background-image: var(--paper), linear-gradient(var(--ground), var(--ground)); }
 .page { max-width: var(--max); margin: 0 auto; padding: 0 var(--margin) 48px; }
 
 /* ---------- type roles ---------- */
@@ -375,7 +382,7 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
 .label, .tag, .action, .chip-link, .count, .pill-note, .newsletter button { font-weight: var(--w-small); }
 
 /* ---------- phones + tablets: the ask stays in reach (scripts/float.js) ---------- */
-.fab { display: none; }
+.fab, .fab-edge { display: none; }
 @media (max-width: 1100px) {
   /* homepage: a wide "let's talk" bar that rises from the bottom once you're past the first screen */
   .fab { display: flex; position: fixed; z-index: 40; left: var(--margin); right: var(--margin); max-width: 520px; margin-inline: auto;
@@ -383,6 +390,10 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
          box-shadow: 0 10px 30px rgba(20, 19, 17, .22); transform: translateY(calc(100% + 32px)); visibility: hidden;
          transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
   .fab.show { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+
+  /* safari samples fixed, full-width elements touching the bottom edge to tint its toolbar. this invisible
+     paper-toned strip is the one it finds, instead of the black button above it (opacity 0 is still sampled) */
+  .fab-edge { display: block; position: fixed; left: 0; right: 0; bottom: 0; height: 8px; z-index: 39; opacity: 0; pointer-events: none; background-color: var(--paper-tone); }
 
   /* project pages: the header sticks, tucks away on the way down, returns on the way up */
   .project-rail .bar { position: sticky; top: 0; z-index: 40; pointer-events: none;   /* only the buttons catch taps, not the strip between them */
