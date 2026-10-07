@@ -3,6 +3,8 @@
    ground, tight gutters, four staggered columns (after the 418 team reference). */
 
 :root {
+  --btn: 48px;             /* round buttons, and the list column that holds them */
+  --tint: color-mix(in oklab, var(--fg) 5%, transparent);   /* list hover / press */
   --ground: #edebe5;       /* the table the cards sit on */
   --card: #fdfcf8;         /* lighter stock for the cards */
   --card-ink: #1b1a17;     /* the one dark card */
@@ -26,7 +28,7 @@
   --fs-ui: 15px;  --fs-button: 15px;  --fs-small: 15px;                       /*  0 */
   --fs-tag-sm: 11.5px;                    /* -1 */
   --end: 32px;           /* space under the last item in a panel */
-  --list-cols: 112px minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, 1fr) 48px;  /* every list shares these columns */         /* space above and below the rail and work column */
+  --list-cols: 112px minmax(0, 1.1fr) minmax(0, 1.6fr) minmax(0, 1fr) var(--btn);  /* every list shares these columns */         /* space above and below the rail and work column */
   --margin: 24px;
   --max: 1680px;
 }
@@ -63,7 +65,7 @@ h1, h2, h3, .title { text-wrap: balance; }
 /* ---------- top bar ---------- */
 .bar { display: flex; align-items: center; gap: var(--gap); padding: 16px 0; }
 .bar .chip-link { display: inline-flex; align-items: center; height: 48px; font: 500 var(--fs-ui)/1 var(--display); font-feature-settings: var(--display-features); text-decoration: none; background: var(--card); border-radius: var(--r-in); padding: 1px 20px 0; }   /* 48px, the height of the round buttons; radius matches the cta buttons */
-.bar .chip-link:hover { background: var(--fg); color: var(--bg); }
+@media (hover: hover) { .bar .chip-link:hover { background: var(--fg); color: var(--bg); } }
 .bar .me { margin-right: auto; }
 .bar .back { justify-content: center; width: 48px; padding: 0; }   /* a square the height of the bar */
 .bar .back svg { width: 20px; height: 20px; }
@@ -136,8 +138,8 @@ h1, h2, h3, .title { text-wrap: balance; }
 .action.primary:hover { background: #3a3833; }
 .action .addr { font: var(--fs-small)/1 var(--body); opacity: .7; margin-left: auto; }
 /* the + is drawn with two bars, not a glyph — text metrics never centre it exactly */
-.plus { position: relative; display: inline-block; width: 48px; height: 48px; flex: none; border-radius: 50%; background: var(--fg); color: var(--bg); font-size: 0; }
-.plus::before, .plus::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 2px; background: currentColor; transform: translate(-50%, -50%); }
+.plus { position: relative; display: inline-block; width: var(--btn); height: var(--btn); flex: none; border-radius: 50%; background: var(--fg); color: var(--bg); font-size: 0; }
+.plus::before, .plus::after { content: ""; position: absolute; left: 50%; top: 50%; width: calc(var(--btn) / 3); height: 2px; background: currentColor; transform: translate(-50%, -50%); }
 .plus::after { transform: translate(-50%, -50%) rotate(90deg); }
 .action .plus { width: 32px; height: 32px; }
 .action .plus::before, .action .plus::after { width: 12px; }
@@ -166,6 +168,8 @@ h1, h2, h3, .title { text-wrap: balance; }
 .pix { display: inline-grid; place-items: center; flex: none; }
 .pix { color: var(--fg); }  /* same ink as the header title */
 .pix svg { width: 24px; height: 24px; fill: currentColor; }
+/* the header icon sits centred over the column of round buttons below it, not flush right */
+.panel-head .pix { width: var(--btn); }
 
 /* rows — text only; the whole row is the link */
 .row { display: grid; grid-template-columns: var(--list-cols); gap: 16px; align-items: center; padding: var(--row-y) var(--in); text-decoration: none; }
@@ -177,17 +181,22 @@ h1, h2, h3, .title { text-wrap: balance; }
 /* soft fill a shade darker than the ground, no outline */
 /* round buttons are white throughout, matching the start-a-project plus */
 .row .plus { background: var(--card); color: var(--fg); box-shadow: none; }
-a.row:hover { background: var(--fg); color: var(--bg); }
-a.row:hover .no, a.row:hover .sum { color: rgba(239, 234, 224, .62); }
-a.row:hover .plus { background: var(--card); color: var(--fg); box-shadow: none; }
+/* hover: a light ink tint, not an inversion. real hover only, so a tap on a phone doesn't leave it stuck on;
+   :active gives taps the same brief feedback */
+a.row, .cv.writing a { transition: background-color .15s ease; }
+@media (hover: hover) { a.row:hover, .cv.writing a:hover { background: var(--tint); } }
+a.row:active, .cv.writing a:active { background: var(--tint); }
 .row.soon .name { color: var(--mute); }
 /* coming-soon rows: same circle as the + but holding a lock, quieter */
-.plus.lock { display: inline-grid; place-items: center; color: var(--mute); }
+.plus.lock { display: inline-grid; place-items: center; color: var(--mute); }   /* same size and stroke as the +, but grey: coming soon */
 .row .plus.lock { background: color-mix(in oklab, var(--fg) 8%, transparent); }  /* locked stays grey: not available yet */
 .plus.lock::before, .plus.lock::after { content: none; }
 .plus.go { display: inline-grid; place-items: center; background: var(--card); color: var(--fg); }
 .plus.go::before, .plus.go::after { content: none; }
-.plus.go svg, .plus.lock svg { width: 16px; height: 16px; }
+/* every glyph in the button column carries the same weight as the +: ~1/3 of the button, 2px ink strokes */
+.plus.go svg { width: calc(var(--btn) * .5); height: calc(var(--btn) * .5); }
+.plus.lock svg { width: calc(var(--btn) * .45); height: calc(var(--btn) * .45); }
+.plus.go svg *, .plus.lock svg * { stroke-width: 2px; vector-effect: non-scaling-stroke; }   /* exactly the + bars' 2px at any size */
 .plus.send, .plus.chat, .plus.icon { display: inline-grid; place-items: center; }
 .plus.send::before, .plus.send::after, .plus.chat::before, .plus.chat::after, .plus.icon::before, .plus.icon::after { content: none; }
 .plus.icon svg { width: 18px; height: 18px; }
@@ -215,9 +224,6 @@ a.row:hover .plus { background: var(--card); color: var(--fg); box-shadow: none;
 .cv.writing .what { grid-column: 2 / 4; }             /* long titles take ② and ③ */
 .cv.writing .detail { grid-column: 4; justify-self: end; }
 .cv.writing .plus { grid-column: 5; }
-.cv.writing a:hover { background: var(--fg); color: var(--bg); }
-.cv.writing a:hover .plus { background: var(--card); color: var(--fg); }
-.cv.writing a:hover .when, .cv.writing a:hover .detail { color: rgba(239, 234, 224, .62); }
 
 /* ---------- modals (start a project, newsletter) ----------
    the form reads like the site's lists: label | field rows, hairlines between,
@@ -308,21 +314,32 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
 /* takes the colour of the next project's discipline */
 .next-card[data-c] { background: var(--c); color: var(--on); }
 .next-card[data-c] .label { color: inherit; opacity: .72; }
-.next-card[data-c]:hover { background: var(--fg); color: var(--bg); }
+@media (hover: hover) { .next-card[data-c]:hover { background: var(--fg); color: var(--bg); } }
 
 /* ---------- tablet + phone: one column; the asks move below the work ---------- */
 @media (max-width: 1100px) {
   .home { grid-template-columns: minmax(0, 1fr); }
   .rail { display: contents; }          /* lets the rail's cards be ordered around the work */
   .rail .id, .rail .about, .rail .capabilities { order: 1; }
-  .main { order: 2; margin-top: 32px; }
-  .rail .cta { order: 3; margin-top: 32px; }
-  :root { --list-cols: 88px minmax(0, 1fr) 48px; }
-  .row { row-gap: 12px; }
-  .row .sum, .row .tags { grid-column: 2 / 3; }
+  .main { order: 2; }
+  .rail .cta { order: 3; }   /* every module, rail card or panel, sits one --gap apart */
+  :root { --list-cols: 88px minmax(0, 1fr) var(--btn); }
+  /* name / summary / tags stack in column 2; the button spans all three rows, centred.
+     spacing is margins, not row-gap, so a missing summary leaves no gap behind */
+  .row { grid-template-rows: auto auto auto; row-gap: 0; }
+  .row .no, .row .name { grid-row: 1; }
+  .row .sum { grid-column: 2; grid-row: 2; margin-top: 12px; }
   .row .sum:empty { display: none; }
-  .row .tags { justify-content: flex-start; }
-  .row .plus { grid-column: 3; grid-row: 1; }
+  .row .tags { grid-column: 2; grid-row: 3; margin-top: 12px; justify-content: flex-start; }
+  .row .plus { grid-column: 3; grid-row: 1 / 4; align-self: center; }
+  /* stacked rows end on a pill's hard edge, so the panel's full end space reads heavier than the top.
+     the top gap is row-y plus the name's internal leading (~4px); match that, optically */
+  .row:last-child { padding-bottom: calc(var(--row-y) + 4px); }
+  /* a plain date line (stone os) ends on its own leading rather than a pill edge, so it needs less */
+  .row:last-child:has(.tags > .label) { padding-bottom: var(--row-y); }
+  /* education + writing end on plain text too: last item gets the same space as the first item's top */
+  .cv, .cv.edu { padding-bottom: 0; }
+  .cv.writing li:last-child a { padding-bottom: var(--list-y); }
   .project { grid-template-columns: 1fr; }
   .rail .bar { order: 0; }
   .rail .info { order: 1; }
@@ -339,8 +356,15 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
   .bar { flex-wrap: wrap; }
   :root { --fs-name: 26.5px; }  /* +2 on phones */
   .logo-tile { flex-basis: 140px; height: 188px; }
-  :root { --list-cols: 72px minmax(0, 1fr) 48px; }
+  /* phones: smaller buttons free up the row; numbers need less room than on tablet */
+  :root { --btn: 40px; --list-cols: 56px minmax(0, 1fr) var(--btn); --row-y: 20px; }
   .cta .ask { font-size: var(--fs-body); }  /* +1 on phones */
+  .row .sum { display: none; }   /* phones: name + tags only; the project page carries the summary */
+  .row .tags { margin-top: 10px; }
+  /* about: a fixed-height window that scrolls inside, with the same fade as the desktop rail */
+  .rail .about.scrolls { height: min(340px, 48svh); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+  .rail .about.scrolls::-webkit-scrollbar { display: none; }
+  .rail .about.scrolls.has-more { -webkit-mask-image: linear-gradient(#000 calc(100% - 56px), transparent); mask-image: linear-gradient(#000 calc(100% - 56px), transparent); }
   .frow { grid-template-columns: 1fr; gap: 8px; }
 }
 
@@ -349,6 +373,27 @@ fieldset.frow > .flabel { grid-column: 1; }   /* legends need a nudge to sit in 
 .logo { font-weight: var(--w-logo); }
 .row .name, .project .info h1, .next-card b { font-weight: var(--w-title); }
 .label, .tag, .action, .chip-link, .count, .pill-note, .newsletter button { font-weight: var(--w-small); }
+
+/* ---------- phones + tablets: the ask stays in reach (scripts/float.js) ---------- */
+.fab { display: none; }
+@media (max-width: 1100px) {
+  /* homepage: a wide "let's talk" bar that rises from the bottom once you're past the first screen */
+  .fab { display: flex; position: fixed; z-index: 40; left: var(--margin); right: var(--margin); max-width: 520px; margin-inline: auto;
+         bottom: calc(var(--margin) + env(safe-area-inset-bottom)); padding: 10px 10px 10px 20px;
+         box-shadow: 0 10px 30px rgba(20, 19, 17, .22); transform: translateY(calc(100% + 32px)); visibility: hidden;
+         transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
+  .fab.show { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+
+  /* project pages: the header sticks, tucks away on the way down, returns on the way up */
+  .project-rail .bar { position: sticky; top: 0; z-index: 40; pointer-events: none;   /* only the buttons catch taps, not the strip between them */
+                       transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+  .project-rail .bar > * { pointer-events: auto; transition: box-shadow .2s; }
+  .project-rail .bar.lifted > * { box-shadow: 0 6px 20px rgba(20, 19, 17, .14); }   /* shadow only once it floats over the images */
+  .project-rail .bar.tucked { transform: translateY(-100%); }
+}
+@media (max-width: 1100px) and (prefers-reduced-motion: reduce) {
+  .fab, .fab.show, .project-rail .bar { transition: none; }
+}
 
 /* ---------- 404 ---------- */
 .lost { min-height: 100svh; display: grid; place-items: center; padding: var(--frame) 0; }
