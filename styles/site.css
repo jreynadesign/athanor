@@ -82,7 +82,8 @@ h1, h2, h3, .title { text-wrap: balance; }
 /* "let's talk" button, shared by the project header and the floating button */
 .talk-btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 1px 20px 0; border-radius: var(--r-in);
             background: var(--fg); color: var(--bg); text-decoration: none; font: 500 var(--fs-ui)/1 var(--display); font-feature-settings: var(--display-features);
-            box-shadow: 0 10px 30px rgba(20, 19, 17, .22); }
+            box-shadow: 0 2px 4px rgba(20, 19, 17, .12), 0 6px 14px rgba(20, 19, 17, .16); }   /* short: reaches ~20px down, clear of
+            the strip above iOS safari's floating toolbar, where it clips anything fixed elements draw */
 .talk-btn svg { width: 18px; height: 18px; margin-top: -1px; }
 @media (hover: hover) { .talk-btn:hover { background: color-mix(in oklab, var(--fg) 82%, var(--bg)); } }
 .bar .dark:hover { background: color-mix(in oklab, var(--fg) 82%, var(--bg)); }
